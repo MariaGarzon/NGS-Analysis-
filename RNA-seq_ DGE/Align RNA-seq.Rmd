@@ -1,0 +1,179 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+### Align RNA-seq reads to a reference genome assembly using the STAR aligner.
+
+About the data
+The RNA-seq data are from date palm fruit. In this experiment, researchers wished to test for differential gene expression between varieties of date palm with high fruit sucrose content (n=4) versus those with trace amounts of sucrose (n=4). The goal was to determine if a group of linked invertase enzymes identified by Genome Wide Association Study (GWAS) showed DGE between varieties with the two sugar phenotypes.
+
+The RNA-seq data in this experiment were generated on a NextSeq sequencer, processed to exclude reads that failed Illumina’s quality control filter, and then adapters removed with Trimmomatic.
+
+```{bash}
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=24:00:00
+#SBATCH --mem=24GB
+#SBATCH --job-name=star_align
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=mpg8596@nyu.edu
+#SBATCH --array=1-8
+
+module purge
+
+#Path to 3-column (tab-delimited) table with sample name, fastq 1 file name, and fastq 2 file name
+table=/scratch/work/courses/BI7653/hw8.2023/fastqs.txt
+
+#Path to directory containing fastq files
+fastq_dir=/scratch/work/courses/BI7653/hw8.2023/fastqs
+
+#Path to STAR genome directory; pre-built index of the reference genome
+genome_dir=/scratch/work/courses/BI7653/hw8.2023/STAR.genome
+
+#Path to reference fasta file
+fasta_file=/scratch/work/courses/BI7653/hw8.2023/Pdac_Barhee_chr_unan_cp_180126.fa
+
+#Define sample, fq1 and fq2 variables for current array index
+line="$(head -n $SLURM_ARRAY_TASK_ID $table | tail -n 1)"
+sample="$(printf "%s" "${line}" | cut -f1)"
+fq1="$(printf "%s" "${line}" | cut -f2)"
+fq2="$(printf "%s" "${line}" | cut -f3)"
+
+#Print to standard out the array index and the sample name
+echo Processing array index: $SLURM_ARRAY_TASK_ID sample: $sample
+
+#Make a directory for the sample and cd to it
+mkdir $sample
+cd $sample
+
+#Define output filenames
+outprefix=${sample}Aligned.sortedByCoord.out
+
+#Load the STAR module
+module load star/intel/2.7.6a
+
+#Run STAR alignment
+# Alignment Process:
+# STAR performs a two-pass alignment process:
+# First Pass: In this pass, STAR identifies candidate mapping locations for each read.
+# Second Pass: STAR refines the mapping, taking into account known splice junctions and other factors unique to RNA-seq data.
+# c. Alignment Output: STAR generates aligned reads in BAM format, which includes information about the positions where each read maps to the reference genome.
+STAR --runThreadN 8 \
+     --genomeDir $genome_dir \
+     --readFilesIn $fastq_dir/$fq1 $fastq_dir/$fq2 \
+     --outFileNamePrefix $sample \
+     --outSAMtype BAM SortedByCoordinate \
+     --outSAMunmapped Within \
+     --outSAMattributes Standard \
+     --outFilterMismatchNoverLmax 0.05 \
+     --outFilterMatchNminOverLread 0.8 \
+     --limitBAMsortRAM 20000000000 \
+     --outTmpDir "${SLURM_JOBTMP}"/"${SLURM_ARRAY_TASK_ID}" \
+     --readFilesCommand zcat \
+   
+#Print the exit status of the STAR command and the time the script ended to standard out
+echo _ESTATUS_ [ STAR for $sample ]: $?
+
+#Load the Samtools module
+module load samtools/intel/1.14
+
+#Index the BAM file
+samtools index ${outprefix}.bam
+echo _ESTATUS_ [ samtools index for $sample ]: $?
+echo _END_ [ STAR for $sample ]: $(date)
+```
+
+job id: 31387132
+ 
+(1) The number of uniquely mapped reads
+
+5091998
+
+(2) The percentage of uniquely mapped reads
+
+14.89%
+
+(3) The total number of input reads  
+
+34202682
+
+It is common to only work with uniquely mapped reads (and not include multiply-mapped reads in downstream analysis). 
+
+To make sure STAR output only uniquely mapped reads, you can set the parameter --outFilterMultimapNmax to 1. This will only output reads that map to a single locus in the genome.
+
+The default mapping quality assigned in the SAM alignment records for uniquely mapped reads is 255.
+
+One hypothesis for the high number and percentage of reads mapped to too many loci could be that the library contains a high amount of repetitive or highly similar sequences that are difficult to uniquely map to the reference genome.
+
+To evaluate this hypothesis, one could perform a few different analyses. First, it may be useful to visualize the distribution of mapped reads across the genome using tools like UCSC Genome Browser or IGV to identify any regions with an abnormally high number of multimapping reads. This could provide insights into potential repetitive or highly similar regions of the genome.
+
+The first 20 lines of the header for one output BAM (using samtools view): 
+
+(base) [mpg8596@log-1 PDAC253]$ samtools view -H PDAC253Aligned.sortedByCoord.out.bam | head -n 20
+
+@HD	VN:1.4	SO:coordinate
+
+@SQ	SN:chr1	LN:40814151
+
+@SQ	SN:chr2	LN:29301675
+
+@SQ	SN:chr3	LN:24755689
+
+@SQ	SN:chr4	LN:33281721
+
+@SQ	SN:chr5	LN:18619412
+
+@SQ	SN:chr6	LN:18596258
+
+@SQ	SN:chr7	LN:16639383
+
+@SQ	SN:chr8	LN:31698078
+
+@SQ	SN:chr9	LN:22757669
+
+@SQ	SN:chr10	LN:15825318
+
+@SQ	SN:chr11	LN:29487722
+
+@SQ	SN:chr12	LN:14769854
+
+@SQ	SN:chr13	LN:12891333
+
+@SQ	SN:chr14	LN:24628924
+
+@SQ	SN:chr15	LN:12030914
+
+@SQ	SN:chr16	LN:13553361
+
+@SQ	SN:chr17	LN:16126437
+
+@SQ	SN:chr18	LN:9812533
+
+@SQ	SN:000007F	LN:4728343
+
+The "SO:coordinate" tag is present in the header, indicating that the BAM file is sorted by genomic coordinates.
+
+What mapping quality scores are present in the alignment for PDAC253 
+
+(base) [mpg8596@log-3 PDAC253]$ samtools view -F 4 PDAC253Aligned.sortedByCoord.out.sam | cut -f 5 | sort | uniq
+
+0
+
+1
+
+255
+
+3
+
+According to the documentation, a mapping quality of 3 = aligns 2 times, 1 = aligns 3 or 4 times, 0 = aligns 5 or more times, 255 = uniquely mapped. 
+
+When testing for differential gene expression between recently duplicated genes in RNA-seq data, there are several factors to consider for accuracy:
+
+If two genes are recently duplicated (lets call them A and A’), then it is possible that the genes A and A’ have identical sequences in the reference genome. Therefore, any read originating from gene A or A’ will not map uniquely and it is impossible to know if the read maps to A or A’. In this circumstance it is impossible independently test for differential expression between say treatment and control of A and A’.
+
+However, it is also possible that the recently duplicated genes have diverged sufficiently (in terms of mutational differences) that reads will map uniquely to each (or at least some of the reads will). So the primary consideration is whether genes A and A’ have diverged sufficiently in sequence such that reads will map uniquely.
+
