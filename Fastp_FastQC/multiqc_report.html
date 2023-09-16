@@ -1,0 +1,1435 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="side-nav-wrapper">
+  <div class="side-nav">
+    <h1>
+      
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      
+      <a rel="noopener" href="#">
+        <img src="javascript://" title="MultiQC"/>
+        <br class="hidden-xs"/>
+        <small class="hidden-xs">v1.9</small>
+      </a>
+    </h1>
+    
+    <p class="mqc_loading_warning">Loading report..</p>
+    <ul class="mqc-nav collapse navbar-collapse">
+      
+      <li>
+        <a rel="noopener" href="#general_stats" class="nav-l1">General Stats</a>
+      </li>
+      
+      
+      <li>
+        <a rel="noopener" href="#fastp" class="nav-l1">fastp</a>
+        <ul>
+        
+            <li>
+              <a rel="noopener" href="#fastp-filtered-reads-chart" class="nav-l2">Filtered Reads</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastp-duprates" class="nav-l2">Duplication Rates</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastp-insert-size" class="nav-l2">Insert Sizes</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastp-seq-quality" class="nav-l2">Sequence Quality</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastp-seq-content-gc" class="nav-l2">GC Content</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastp-seq-content-n" class="nav-l2">N content</a>
+            </li>
+            
+        
+        </ul>
+      </li>
+      
+      
+      
+      <li>
+        <a rel="noopener" href="#fastqc" class="nav-l1">FastQC</a>
+        <ul>
+        
+            <li>
+              <a rel="noopener" href="#fastqc_sequence_counts" class="nav-l2">Sequence Counts</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_per_base_sequence_quality" class="nav-l2">Sequence Quality Histograms</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_per_sequence_quality_scores" class="nav-l2">Per Sequence Quality Scores</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_per_base_sequence_content" class="nav-l2">Per Base Sequence Content</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_per_sequence_gc_content" class="nav-l2">Per Sequence GC Content</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_per_base_n_content" class="nav-l2">Per Base N Content</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_sequence_length_distribution" class="nav-l2">Sequence Length Distribution</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_sequence_duplication_levels" class="nav-l2">Sequence Duplication Levels</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_overrepresented_sequences" class="nav-l2">Overrepresented sequences</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_adapter_content" class="nav-l2">Adapter Content</a>
+            </li>
+            
+            <li>
+              <a rel="noopener" href="#fastqc_status_checks" class="nav-l2">Status Checks</a>
+            </li>
+            
+        
+        </ul>
+      </li>
+      
+      
+    </ul>
+  </div>
+  
+  <div><span class="glyphicon glyphicon-triangle-left"></span></div>
+</div>
+
+
+
+<div class="mqc-toolbox collapse">
+
+  
+  <div class="mqc-toolbox-buttons hidden-xs">
+    <a rel="noopener" class="mqc-toolbox-label" href="#mqc_cols" title="Open Toolbox">Toolbox</a>
+    <ul>
+      <li><a rel="noopener" href="#mqc_cols" title="Highlight"><span class="glyphicon glyphicon-pushpin"></span></a></li>
+      <li><a rel="noopener" href="#mqc_renamesamples" title="Rename"><span class="glyphicon glyphicon-font"></span></a></li>
+      <li><a rel="noopener" href="#mqc_hidesamples" title="Hide"><span class="glyphicon glyphicon-eye-close"></span></a></li>
+      <li><a rel="noopener" href="#mqc_exportplots" title="Export"><span class="glyphicon glyphicon-download-alt"></span></a></li>
+      <li><a rel="noopener" href="#mqc_saveconfig" title="Save"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>
+      <li><a rel="noopener" href="#mqc_about" title="About"><span class="glyphicon glyphicon-question-sign"></span></a></li>
+    </ul>
+  </div>
+
+  <div class="mqc-toolbox-wrapper">
+    
+    <div class="mqc-toolbox-header hidden-xs">
+      <h3>MultiQC Toolbox</h3>
+    </div>
+
+    
+    <div class="mqc_filter_section">
+      <h4>
+        Apply
+        Highlight Samples
+      </h4>
+      
+      
+        
+        
+        +
+      
+      <p class="mqc_regex_mode_p">
+        <span class="mqc_switch_wrapper mqc_regex_mode">Regex mode <span class="mqc_switch re_mode off">off</span></span>
+        help
+        <span class="glyphicon glyphicon-trash"></span> Clear
+      </p>
+      <ul class="mqc_filters"></ul>
+    </div>
+
+    
+    <div class="mqc_filter_section">
+      <h4>
+        Apply
+        Rename Samples
+      </h4>
+      
+      
+        
+        
+        +
+      
+      <p><a rel="noopener" href="#mqc_renamesamples_bulk_collapse">Click here for bulk input.</a></p>
+      <div class="collapse">
+        <p>Paste two columns of a tab-delimited table here (eg. from Excel).</p>
+        <p>First column should be the old name, second column the new name.</p>
+        
+          
+          Add
+        
+      </div>
+      <p class="mqc_regex_mode_p">
+        <span class="mqc_switch_wrapper mqc_regex_mode">Regex mode <span class="mqc_switch re_mode off">off</span></span>
+        help
+        <span class="glyphicon glyphicon-trash"></span> Clear
+      </p>
+      <ul class="mqc_filters"></ul>
+    </div>
+
+    
+    <div class="mqc_filter_section">
+      <h4>
+        Apply
+        Show / Hide Samples
+      </h4>
+      
+      
+        <div class="radio input-sm">
+          <label> Hide matching samples</label>
+        </div>
+        <div class="radio input-sm">
+          <label> Show only matching samples</label>
+        </div>
+        <div class="form-inline">
+          
+          +
+        </div>
+      
+      
+      <p class="mqc_regex_mode_p">
+        <span class="mqc_switch_wrapper mqc_regex_mode">Regex mode <span class="mqc_switch re_mode off">off</span></span>
+        help
+        <span class="glyphicon glyphicon-trash"></span> Clear
+      </p>
+      <ul class="mqc_filters"></ul>
+    </div>
+
+    
+    <div class="mqc_filter_section">
+      <h4>Export Plots</h4>
+      
+        <ul class="nav nav-tabs">
+          <li class="active"><a rel="noopener" href="#mqc_image_download">Images</a></li>
+          <li><a rel="noopener" href="#mqc_data_download">Data</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade in active">
+            <div class="row">
+              <div class="form-group col-sm-6">
+                <div class="input-group input-group-sm">
+                  
+                  <span class="input-group-addon">px</span>
+                </div>
+              </div>
+              <div class="form-group col-sm-6">
+                <div class="input-group input-group-sm">
+                  
+                  <span class="input-group-addon">px</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-sm-6 checkbox">
+                <label> Aspect ratio</label>
+              </div>
+              <div class="form-group col-sm-6">
+                
+                  <option value="image/png">PNG</option>
+                  <option value="image/jpeg">JPEG</option>
+                  <option value="image/svg+xml">SVG</option>
+                
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6 checkbox">
+                <label for="mqc_export_scaling">Plot scaling</label>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group input-group-sm">
+                  
+                  <span class="input-group-addon">X</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade">
+            <p>Download the raw data used to create the plots in this report below:</p>
+            <div class="row">
+              <div class="form-group col-sm-4 checkbox">
+                <label>Format:</label>
+              </div>
+              <div class="form-group col-sm-8">
+                
+                  <option value="tsv">Tab-separated</option>
+                  <option value="csv">Comma-separated</option>
+                  <option value="json">JSON</option>
+                
+              </div>
+            </div>
+            
+            <p>Note that additional data was saved in <code>multiqc_data</code> when this report was generated.</p>
+            
+            <div></div>
+          </div>
+        </div>
+
+        <hr/>
+        <h5>Choose Plots</h5>
+        <span class="glyphicon glyphicon-check"></span> All
+        <span class="glyphicon glyphicon-unchecked"></span> None
+        <div></div>
+
+        <hr/>
+        
+          <span class="glyphicon glyphicon-download-alt"></span> &#160; Download Plot <span>Images</span>
+        
+        <p><small>If you use plots from MultiQC in a publication or presentation, please cite:</small></p>
+        <blockquote>
+          <strong>MultiQC: Summarize analysis results for multiple tools and samples in a single report</strong><br/>
+          <em>Philip Ewels, M&#229;ns Magnusson, Sverker Lundin and Max K&#228;ller</em><br/>
+          Bioinformatics (2016)<br/>
+          doi: <a rel="noopener" href="http://dx.doi.org/10.1093/bioinformatics/btw354" target="_blank">10.1093/bioinformatics/btw354</a><br/>
+          PMID: <a rel="noopener" href="http://www.ncbi.nlm.nih.gov/pubmed/27312411" target="_blank">27312411</a>
+        </blockquote>
+      
+    </div>
+
+    
+    <div class="mqc_filter_section">
+      <h4>Save Settings</h4>
+      <p>You can save the toolbox settings for this report to the browser.</p>
+      
+        
+        <span class="glyphicon glyphicon-floppy-disk"></span> Save
+      
+      <hr/>
+
+      <h4>Load Settings</h4>
+      <p>Choose a saved report profile from the dropdown box below:</p>
+      
+        <div class="form-group">
+          
+            <option value="">[ select ]</option>
+          
+        </div>
+        <div class="form-group actions">
+          <span class="glyphicon glyphicon-floppy-open"></span> Load
+          <span class="glyphicon glyphicon-trash"></span> Delete
+          <span class="glyphicon glyphicon-floppy-saved"></span> Set default
+          <span class="glyphicon glyphicon-floppy-remove"></span> Clear default
+        </div>
+      
+    </div>
+
+    
+    <div class="mqc_filter_section">
+      <h4>About MultiQC</h4>
+      <p>This report was generated using MultiQC, version 1.9</p>
+      <p>You can see a YouTube video describing how to use MultiQC reports here:
+        <a rel="noopener" href="https://youtu.be/qPbIlO_KWN0?list=PLIA2-lqNuhvFGAsB92N0v7Qi5xCxCNsYM" target="_blank">https://youtu.be/qPbIlO_KWN0</a></p>
+      <p>For more information about MultiQC, including other videos and
+        extensive documentation, please visit <a rel="noopener" href="http://multiqc.info/?ref=mqc_report" target="_blank">http://multiqc.info</a></p>
+      <p>You can report bugs, suggest improvements and find the source code for MultiQC on GitHub:
+        <a rel="noopener" href="https://github.com/ewels/MultiQC" target="_blank">https://github.com/ewels/MultiQC</a></p>
+      <p>MultiQC is published in Bioinformatics:</p>
+      <blockquote>
+        <strong>MultiQC: Summarize analysis results for multiple tools and samples in a single report</strong><br/>
+        <em>Philip Ewels, M&#229;ns Magnusson, Sverker Lundin and Max K&#228;ller</em><br/>
+        Bioinformatics (2016)<br/>
+        doi: <a rel="noopener" href="http://dx.doi.org/10.1093/bioinformatics/btw354" target="_blank">10.1093/bioinformatics/btw354</a><br/>
+        PMID: <a rel="noopener" href="http://www.ncbi.nlm.nih.gov/pubmed/27312411" target="_blank">27312411</a>
+      </blockquote>
+    </div>
+
+  </div>
+  <a rel="noopener" href="#top" class="mqc-toplink hidden-xs" title="Go to top"><span class="glyphicon glyphicon-chevron-up"></span></a>
+</div>
+
+
+<div class="mainpage">
+
+  
+
+<h1>
+    
+    <a rel="noopener" href="http://multiqc.info" target="_blank">
+        <img src="javascript://" title="MultiQC"/>
+    </a>
+</h1>
+
+
+
+<p class="lead">
+  A modular tool to aggregate results from bioinformatics analyses across many samples into a single report.
+</p>
+
+
+
+
+
+
+
+  <div class="alert alert-danger">
+    <h4>JavaScript Disabled</h4>
+    <p>MultiQC reports use JavaScript for plots and toolbox functions. It looks like
+    you have JavaScript disabled in your web browser. Please note that many of the report
+    functions will not work as intended.</p>
+  </div>
+
+
+<div class="alert alert-warning mqc_loading_warning" style="display:none;"><span class="glyphicon glyphicon-time"></span> &#160;Loading report..</div>
+
+
+<div>
+  <p>Report
+  
+    generated on 2023-02-16, 21:03
+  
+  
+    based on data in:
+    
+      <code class="mqc_analysis_path">/scratch/mpg8596/ngs.week2/task2</code></p>
+    
+  
+</div>
+
+
+
+
+
+
+
+<hr/>
+
+<div class="alert alert-info alert-dismissible hidden-print" style="display: none;">
+  <span>&#215;</span>
+  don&#39;t show again
+  <span class="glyphicon glyphicon-info-sign"></span>
+  <strong>Welcome!</strong> Not sure where to start? &#160;
+  <a rel="noopener" href="https://www.youtube.com/watch?v=qPbIlO_KWN0" target="_blank" class="btn btn-info btn-sm">Watch a tutorial video</a>
+  &#160; <small><em>(6:06)</em></small>
+</div>
+
+
+
+  
+
+
+<div class="mqc-module-section">
+  <h2>General Statistics</h2>
+  
+        
+            <span class="glyphicon glyphicon-copy"></span> Copy table
+        
+        
+            
+                <span class="glyphicon glyphicon-th"></span> Configure Columns
+            
+            
+        
+            <span class="glyphicon glyphicon-sort-by-attributes-alt"></span> Sort by highlight
+        
+        
+            
+                <span class="glyphicon glyphicon glyphicon-stats"></span> Plot
+            
+            
+        <small class="mqc_table_numrows_text">Showing <sup class="mqc_table_numrows">63</sup>/<sub>63</sub> rows and <sup class="mqc_table_numcols">7</sup>/<sub>11</sub> columns.</small>
+        
+        <div class="mqc_table_container">
+            <div class="table-responsive mqc-table-responsive mqc-table-collapse">
+                <table class="table table-condensed mqc_table">
+        <thead><tr><th class="rowheader">Sample Name</th><th class="mqc-generalstats-fastp-pct_duplication"><span class="mqc_table_tooltip" title="fastp: Duplication rate in filtered reads">% Duplication</span></th><th class="mqc-generalstats-fastp-after_filtering_q30_rate hidden"><span class="mqc_table_tooltip" title="fastp: Percentage of reads &gt; Q30 after filtering">% &gt; Q30</span></th><th class="mqc-generalstats-fastp-after_filtering_q30_bases hidden"><span class="mqc_table_tooltip" title="fastp: Bases &gt; Q30 after filtering (millions)">Mb Q30 bases</span></th><th class="mqc-generalstats-fastp-after_filtering_gc_content"><span class="mqc_table_tooltip" title="fastp: GC content after filtering">GC content</span></th><th class="mqc-generalstats-fastp-pct_surviving"><span class="mqc_table_tooltip" title="fastp: Percent reads passing filter">% PF</span></th><th class="mqc-generalstats-fastp-pct_adapter"><span class="mqc_table_tooltip" title="fastp: Percentage adapter-trimmed reads">% Adapter</span></th><th class="mqc-generalstats-fastqc-percent_duplicates"><span class="mqc_table_tooltip" title="FastQC: % Duplicate Reads">% Dups</span></th><th class="mqc-generalstats-fastqc-percent_gc"><span class="mqc_table_tooltip" title="FastQC: Average % GC Content">% GC</span></th><th class="mqc-generalstats-fastqc-avg_sequence_length hidden"><span class="mqc_table_tooltip" title="FastQC: Average Sequence Length (bp)">Length</span></th><th class="mqc-generalstats-fastqc-percent_fails hidden"><span class="mqc_table_tooltip" title="FastQC: Percentage of modules failed in FastQC report (includes those not plotted here)">% Failed</span></th><th class="mqc-generalstats-fastqc-total_sequences"><span class="mqc_table_tooltip" title="FastQC: Total Sequences (millions)">M Seqs</span></th></tr></thead><tbody><tr><th class="rowheader">ERR156634_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.768038%;background-color:#b3d3c4;"></span><span class="val">0.8%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:93.60969999999999%;background-color:#b5cce0;"></span><span class="val">93.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:16.02898517215837%;background-color:#f4fbf2;"></span><span class="val">3<span class="mqc_thousandSep"></span>216.6</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:42.1489%;background-color:#dcecf5;"></span><span class="val">42.1%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:98.00323086113998%;background-color:#b3c9bb;"></span><span class="val">98.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.5743518672980106%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR156634_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:4.385198431079317%;background-color:#b6d8c6;"></span><span class="val">4.4%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:42.0%;background-color:#ebcfd2;"></span><span class="val">42%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00798740966253%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:15.71211406702782%;background-color:#f3f8fc;"></span><span class="val">17.2</span></div></td></tr><tr><th class="rowheader">ERR156634_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:4.29678614956849%;background-color:#b6d8c6;"></span><span class="val">4.3%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:42.0%;background-color:#ebcfd2;"></span><span class="val">42%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00798740966253%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:15.71211406702782%;background-color:#f3f8fc;"></span><span class="val">17.2</span></div></td></tr><tr><th class="rowheader">ERR162846_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.693417%;background-color:#b3d3c4;"></span><span class="val">0.7%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:86.911%;background-color:#b5d2e6;"></span><span class="val">86.9%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:17.06759476941631%;background-color:#f4fbf2;"></span><span class="val">3<span class="mqc_thousandSep"></span>425.1</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:41.8759%;background-color:#ddecf5;"></span><span class="val">41.9%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:98.74007505168333%;background-color:#b3c8bb;"></span><span class="val">98.7%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.5474660462228506%;background-color:#b3d2c3;"></span><span class="val">0.5%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR162846_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:3.8146182686107295%;background-color:#b5d7c6;"></span><span class="val">3.8%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00825002000437%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:18.181818181818183%;background-color:#fef1eb;"></span><span class="val">18%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:18.019628814926588%;background-color:#f2f7fc;"></span><span class="val">19.7</span></div></td></tr><tr><th class="rowheader">ERR162846_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:3.593009416221676%;background-color:#b5d7c6;"></span><span class="val">3.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00825002000437%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:18.019628814926588%;background-color:#f2f7fc;"></span><span class="val">19.7</span></div></td></tr><tr><th class="rowheader">ERR229780_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.24147600000000002%;background-color:#b3d2c3;"></span><span class="val">0.2%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:88.024%;background-color:#b5d1e6;"></span><span class="val">88.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:93.5360377828253%;background-color:#b5cce0;"></span><span class="val">18<span class="mqc_thousandSep"></span>770.5</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:39.4717%;background-color:#dfeef5;"></span><span class="val">39.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:89.9237698069163%;background-color:#b3d1bf;"></span><span class="val">89.9%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.6984733820687085%;background-color:#b3d3c4;"></span><span class="val">0.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR229780_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.436858150434134%;background-color:#b7dac7;"></span><span class="val">5.4%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:39.0%;background-color:#e4ccde;"></span><span class="val">39%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.98935085314946%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:96.54811094086418%;background-color:#b5c4d7;"></span><span class="val">105.6</span></div></td></tr><tr><th class="rowheader">ERR229780_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.109926970169539%;background-color:#b6d9c7;"></span><span class="val">5.1%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:39.0%;background-color:#e4ccde;"></span><span class="val">39%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.98935085314946%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:96.54811094086418%;background-color:#b5c4d7;"></span><span class="val">105.6</span></div></td></tr><tr><th class="rowheader">ERR229810_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.500373%;background-color:#b3d2c3;"></span><span class="val">0.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:89.0498%;background-color:#b5d0e5;"></span><span class="val">89.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:80.19208566095827%;background-color:#bbd8e9;"></span><span class="val">16<span class="mqc_thousandSep"></span>092.7</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:39.0458%;background-color:#e0eef6;"></span><span class="val">39.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:91.47037567124785%;background-color:#b3cfbe;"></span><span class="val">91.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.6907980041536976%;background-color:#b3d3c4;"></span><span class="val">0.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR229810_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:6.0458679040658865%;background-color:#b7dac8;"></span><span class="val">6.0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:39.0%;background-color:#e4ccde;"></span><span class="val">39%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.9927809069389%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:81.81819653090928%;background-color:#b8cfe5;"></span><span class="val">89.5</span></div></td></tr><tr><th class="rowheader">ERR229810_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.888159139974874%;background-color:#b7dac7;"></span><span class="val">5.9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:39.0%;background-color:#e4ccde;"></span><span class="val">39%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.9927809069389%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:81.81819653090928%;background-color:#b8cfe5;"></span><span class="val">89.5</span></div></td></tr><tr><th class="rowheader">ERR229811_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.351957%;background-color:#b3d2c3;"></span><span class="val">0.4%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:88.9247%;background-color:#b5d0e5;"></span><span class="val">88.9%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:88.3110049885049%;background-color:#b5d1e5;"></span><span class="val">17<span class="mqc_thousandSep"></span>722.0</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:39.1171%;background-color:#e0eef6;"></span><span class="val">39.1%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:91.3169011848575%;background-color:#b3cfbe;"></span><span class="val">91.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.6632532434354724%;background-color:#b3d3c3;"></span><span class="val">0.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR229811_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:6.136239952216442%;background-color:#b7dbc8;"></span><span class="val">6.1%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:39.0%;background-color:#e4ccde;"></span><span class="val">39%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.99415959363851%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:90.22721467641944%;background-color:#b5c9de;"></span><span class="val">98.7</span></div></td></tr><tr><th class="rowheader">ERR229811_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:6.047369406409402%;background-color:#b7dac8;"></span><span class="val">6.0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:39.0%;background-color:#e4ccde;"></span><span class="val">39%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.99415959363851%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:90.22721467641944%;background-color:#b5c9de;"></span><span class="val">98.7</span></div></td></tr><tr><th class="rowheader">ERR229812_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.334206%;background-color:#b3d2c3;"></span><span class="val">0.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:87.8296%;background-color:#b5d1e6;"></span><span class="val">87.8%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:74.34078685164971%;background-color:#c0ddec;"></span><span class="val">14<span class="mqc_thousandSep"></span>918.5</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:38.992900000000006%;background-color:#e0eef6;"></span><span class="val">39.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:89.91633623020131%;background-color:#b3d1bf;"></span><span class="val">89.9%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.7158052112663438%;background-color:#b3d3c4;"></span><span class="val">0.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR229812_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.717831586487236%;background-color:#b7dac7;"></span><span class="val">5.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:38.0%;background-color:#e1cae1;"></span><span class="val">38%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.99085602200009%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:76.9034558097932%;background-color:#bbd3e8;"></span><span class="val">84.1</span></div></td></tr><tr><th class="rowheader">ERR229812_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.534343184594704%;background-color:#b7dac7;"></span><span class="val">5.5%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:39.0%;background-color:#e4ccde;"></span><span class="val">39%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.99085602200009%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:76.9034558097932%;background-color:#bbd3e8;"></span><span class="val">84.1</span></div></td></tr><tr><th class="rowheader">ERR234332_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.34312000000000004%;background-color:#b3d2c3;"></span><span class="val">0.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:90.8489%;background-color:#b5cee3;"></span><span class="val">90.8%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:100.0%;background-color:#b5c6d9;"></span><span class="val">20<span class="mqc_thousandSep"></span>067.7</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:39.8178%;background-color:#dfeef5;"></span><span class="val">39.8%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:93.293131524892%;background-color:#b3cdbd;"></span><span class="val">93.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.5938801285865074%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR234332_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.875273622759451%;background-color:#b7dac7;"></span><span class="val">5.9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:39.0%;background-color:#e4ccde;"></span><span class="val">39%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:100.0%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:100.0%;background-color:#b5c1d3;"></span><span class="val">109.4</span></div></td></tr><tr><th class="rowheader">ERR234332_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.706706762909093%;background-color:#b7dac7;"></span><span class="val">5.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:39.0%;background-color:#e4ccde;"></span><span class="val">39%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:100.0%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:100.0%;background-color:#b5c1d3;"></span><span class="val">109.4</span></div></td></tr><tr><th class="rowheader">ERR239435_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.594822%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:90.9542%;background-color:#b5cee3;"></span><span class="val">91.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:7.445051996211966%;background-color:#f8fcf7;"></span><span class="val">1<span class="mqc_thousandSep"></span>494.0</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:41.3356%;background-color:#ddedf5;"></span><span class="val">41.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:98.46122095598598%;background-color:#b3c8bb;"></span><span class="val">98.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.5936441141108317%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR239435_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:2.8506507038721622%;background-color:#b5d6c5;"></span><span class="val">2.9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.99625504546904%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:7.511839350482126%;background-color:#f8fbfe;"></span><span class="val">8.2</span></div></td></tr><tr><th class="rowheader">ERR239435_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:2.81547060634405%;background-color:#b5d6c5;"></span><span class="val">2.8%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.99625504546904%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:7.511839350482126%;background-color:#f8fbfe;"></span><span class="val">8.2</span></div></td></tr><tr><th class="rowheader">ERR239436_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.597011%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:90.9768%;background-color:#b5cee3;"></span><span class="val">91.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:7.039350830080774%;background-color:#f9fdf7;"></span><span class="val">1<span class="mqc_thousandSep"></span>412.6</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:41.296699999999994%;background-color:#ddedf5;"></span><span class="val">41.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:98.35016142505931%;background-color:#b3c9bb;"></span><span class="val">98.4%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.5651143552040268%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR239436_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:2.6998078773425362%;background-color:#b5d6c5;"></span><span class="val">2.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.999070242745%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:7.1005280144357625%;background-color:#f8fbfe;"></span><span class="val">7.8</span></div></td></tr><tr><th class="rowheader">ERR239436_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:2.6527488827659766%;background-color:#b5d6c5;"></span><span class="val">2.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.999070242745%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:7.1005280144357625%;background-color:#f8fbfe;"></span><span class="val">7.8</span></div></td></tr><tr><th class="rowheader">ERR239446_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.597385%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:91.01310000000001%;background-color:#b5cee2;"></span><span class="val">91.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:8.152545382604233%;background-color:#f8fcf6;"></span><span class="val">1<span class="mqc_thousandSep"></span>636.0</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:41.5733%;background-color:#ddecf5;"></span><span class="val">41.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:98.23575027598159%;background-color:#b3c9bb;"></span><span class="val">98.2%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.6464355571134627%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR239446_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:3.137401669677118%;background-color:#b5d6c5;"></span><span class="val">3.1%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.99582259482425%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:8.22039042300359%;background-color:#f8fbfd;"></span><span class="val">9.0</span></div></td></tr><tr><th class="rowheader">ERR239446_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:3.0646855741048142%;background-color:#b5d6c5;"></span><span class="val">3.1%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.99582259482425%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:8.22039042300359%;background-color:#f8fbfd;"></span><span class="val">9.0</span></div></td></tr><tr><th class="rowheader">ERR240369_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.542942%;background-color:#b3d2c3;"></span><span class="val">0.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:91.4645%;background-color:#b5cee2;"></span><span class="val">91.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:1.6273497666872452%;background-color:#fcfefa;"></span><span class="val">326.6</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:41.2781%;background-color:#ddedf5;"></span><span class="val">41.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:97.87275908260783%;background-color:#b3c9bb;"></span><span class="val">97.9%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.5610926096040726%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR240369_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:1.396830602929299%;background-color:#b4d4c4;"></span><span class="val">1.4%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00003840402984%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:1.6327233169154118%;background-color:#fcfdff;"></span><span class="val">1.8</span></div></td></tr><tr><th class="rowheader">ERR240369_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:1.405213246322944%;background-color:#b4d4c4;"></span><span class="val">1.4%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00003840402984%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:1.6327233169154118%;background-color:#fcfdff;"></span><span class="val">1.8</span></div></td></tr><tr><th class="rowheader">ERR251007_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.5930000000000001%;background-color:#b3d3c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:87.0281%;background-color:#b5d2e6;"></span><span class="val">87.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:56.736322394912584%;background-color:#d0ecf0;"></span><span class="val">11<span class="mqc_thousandSep"></span>385.7</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:40.61%;background-color:#deedf5;"></span><span class="val">40.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:89.72502456777265%;background-color:#b3d1bf;"></span><span class="val">89.7%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.5278205675560369%;background-color:#b3d2c3;"></span><span class="val">0.5%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR251007_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:6.645165940784664%;background-color:#b8dbc8;"></span><span class="val">6.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:40.0%;background-color:#e6cdda;"></span><span class="val">40%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00064813503779%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:59.8250793027439%;background-color:#c9e0ef;"></span><span class="val">65.4</span></div></td></tr><tr><th class="rowheader">ERR251007_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:6.417330494042446%;background-color:#b8dbc8;"></span><span class="val">6.4%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:40.0%;background-color:#e6cdda;"></span><span class="val">40%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00064813503779%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:59.8250793027439%;background-color:#c9e0ef;"></span><span class="val">65.4</span></div></td></tr><tr><th class="rowheader">ERR251037_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.553958%;background-color:#b3d2c3;"></span><span class="val">0.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:91.1902%;background-color:#b5cee2;"></span><span class="val">91.2%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:50.32953219271139%;background-color:#d7f0ed;"></span><span class="val">10<span class="mqc_thousandSep"></span>100.0</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:41.2359%;background-color:#ddedf5;"></span><span class="val">41.2%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:93.08968665645544%;background-color:#b3cebd;"></span><span class="val">93.1%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.5308985540003228%;background-color:#b3d2c3;"></span><span class="val">0.5%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR251037_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:6.2948600045425716%;background-color:#b7dbc8;"></span><span class="val">6.3%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00881307204557%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:50.643141652747595%;background-color:#d2e6f2;"></span><span class="val">55.4</span></div></td></tr><tr><th class="rowheader">ERR251037_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:6.135701794786769%;background-color:#b7dbc8;"></span><span class="val">6.1%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00881307204557%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:50.643141652747595%;background-color:#d2e6f2;"></span><span class="val">55.4</span></div></td></tr><tr><th class="rowheader">ERR251551_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.47817%;background-color:#b3d2c3;"></span><span class="val">0.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:81.1344%;background-color:#bad7e9;"></span><span class="val">81.1%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:38.72451697012803%;background-color:#e4f4e9;"></span><span class="val">7<span class="mqc_thousandSep"></span>771.1</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:44.311%;background-color:#daebf4;"></span><span class="val">44.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:78.61309238972396%;background-color:#badac5;"></span><span class="val">78.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.7749550848186358%;background-color:#b3d3c4;"></span><span class="val">0.8%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR251551_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:6.517576436638521%;background-color:#b8dbc8;"></span><span class="val">6.5%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:44.0%;background-color:#f0d2ca;"></span><span class="val">44%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.9945910356855%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:27.27272727272727%;background-color:#fee8e0;"></span><span class="val">27%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:43.80151466697876%;background-color:#daebf4;"></span><span class="val">47.9</span></div></td></tr><tr><th class="rowheader">ERR251551_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:6.279248550167353%;background-color:#b7dbc8;"></span><span class="val">6.3%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:44.0%;background-color:#f0d2ca;"></span><span class="val">44%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.9945910356855%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:27.27272727272727%;background-color:#fee8e0;"></span><span class="val">27%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:43.80151466697876%;background-color:#daebf4;"></span><span class="val">47.9</span></div></td></tr><tr><th class="rowheader">ERR251560_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.406164%;background-color:#b3d2c3;"></span><span class="val">0.4%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:85.10170000000001%;background-color:#b7d4e7;"></span><span class="val">85.1%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:43.65978228484154%;background-color:#def2eb;"></span><span class="val">8<span class="mqc_thousandSep"></span>761.5</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:40.613899999999994%;background-color:#deedf5;"></span><span class="val">40.6%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:86.33859043937531%;background-color:#b3d4c0;"></span><span class="val">86.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.5384364911359021%;background-color:#b3d2c3;"></span><span class="val">0.5%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">ERR251560_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.928676881354022%;background-color:#b7dac7;"></span><span class="val">5.9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:40.0%;background-color:#e6cdda;"></span><span class="val">40%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.0075099222664%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:47.07550407560214%;background-color:#d6e9f3;"></span><span class="val">51.5</span></div></td></tr><tr><th class="rowheader">ERR251560_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.659427276565822%;background-color:#b7dac7;"></span><span class="val">5.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:40.0%;background-color:#e6cdda;"></span><span class="val">40%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.0075099222664%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:47.07550407560214%;background-color:#d6e9f3;"></span><span class="val">51.5</span></div></td></tr><tr><th class="rowheader">SRR493234_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.8559570000000001%;background-color:#b3d3c4;"></span><span class="val">0.9%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:83.5184%;background-color:#b8d5e8;"></span><span class="val">83.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:29.686744024554034%;background-color:#ecf7ec;"></span><span class="val">5<span class="mqc_thousandSep"></span>957.4</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:41.5185%;background-color:#ddecf5;"></span><span class="val">41.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:91.03948511111506%;background-color:#b3d0be;"></span><span class="val">91.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.49719767454554814%;background-color:#b3d2c3;"></span><span class="val">0.5%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">SRR493234_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.564039509349826%;background-color:#b7dac7;"></span><span class="val">5.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.00015468633815%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:33.625765111181565%;background-color:#e6f1f7;"></span><span class="val">36.8</span></div></td></tr><tr><th class="rowheader">SRR493234_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.506689789923016%;background-color:#b7dac7;"></span><span class="val">5.5%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:93.06926960823579%;background-color:#b8dcc8;"></span><span class="val">94 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:33.625765111181565%;background-color:#e6f1f7;"></span><span class="val">36.8</span></div></td></tr><tr><th class="rowheader">SRR702073_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:3.6807399999999997%;background-color:#b5d7c6;"></span><span class="val">3.7%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:89.1176%;background-color:#b5d0e4;"></span><span class="val">89.1%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:27.643692368049607%;background-color:#edf8ed;"></span><span class="val">5<span class="mqc_thousandSep"></span>547.4</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:46.655499999999996%;background-color:#d7e9f4;"></span><span class="val">46.7%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:94.0219756965511%;background-color:#b3cdbd;"></span><span class="val">94.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:2.995109138808336%;background-color:#b5d6c5;"></span><span class="val">3.0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">SRR702073_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:20.13685171473783%;background-color:#d1ebd0;"></span><span class="val">20.1%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:46.0%;background-color:#f5d4c2;"></span><span class="val">46%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.7802828554027%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:28.242793833895924%;background-color:#ebf3f9;"></span><span class="val">30.9</span></div></td></tr><tr><th class="rowheader">SRR702073_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:19.916861602911936%;background-color:#d1ebd0;"></span><span class="val">19.9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:46.0%;background-color:#f5d4c2;"></span><span class="val">46%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.7802828554027%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:28.242793833895924%;background-color:#ebf3f9;"></span><span class="val">30.9</span></div></td></tr><tr><th class="rowheader">SRR708363_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:1.01555%;background-color:#b3d3c4;"></span><span class="val">1.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:92.17840000000001%;background-color:#b5cde1;"></span><span class="val">92.2%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:51.134453886478894%;background-color:#d6efee;"></span><span class="val">10<span class="mqc_thousandSep"></span>261.5</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:43.2107%;background-color:#dbebf4;"></span><span class="val">43.2%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:94.19518380118913%;background-color:#b3cdbd;"></span><span class="val">94.2%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:0.8111172024961916%;background-color:#b3d3c4;"></span><span class="val">0.8%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">SRR708363_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:8.182770713223832%;background-color:#b9ddc9;"></span><span class="val">8.2%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:43.0%;background-color:#eed0ce;"></span><span class="val">43%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.98765468017882%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:50.403153959902546%;background-color:#d2e6f3;"></span><span class="val">55.1</span></div></td></tr><tr><th class="rowheader">SRR708363_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:8.157816982175902%;background-color:#b9ddc9;"></span><span class="val">8.2%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:43.0%;background-color:#eed0ce;"></span><span class="val">43%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.98765468017882%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:50.403153959902546%;background-color:#d2e6f3;"></span><span class="val">55.1</span></div></td></tr><tr><th class="rowheader">SRR766045_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:3.95782%;background-color:#b6d7c6;"></span><span class="val">4.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:86.79639999999999%;background-color:#b5d2e6;"></span><span class="val">86.8%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:22.50856745062778%;background-color:#f1f9ef;"></span><span class="val">4<span class="mqc_thousandSep"></span>516.9</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:47.957300000000004%;background-color:#d5e8f3;"></span><span class="val">48.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:93.09744274476793%;background-color:#b3cebd;"></span><span class="val">93.1%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:2.6791855423068247%;background-color:#b5d6c5;"></span><span class="val">2.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">SRR766045_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:18.674425734810356%;background-color:#ceeacf;"></span><span class="val">18.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:48.0%;background-color:#fad6ba;"></span><span class="val">48%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.79714604563293%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:23.60739535660919%;background-color:#eff5fa;"></span><span class="val">25.8</span></div></td></tr><tr><th class="rowheader">SRR766045_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:17.825953550121184%;background-color:#cce9cf;"></span><span class="val">17.8%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:47.0%;background-color:#f8d5be;"></span><span class="val">47%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:99.79714604563293%;background-color:#b3d2c3;"></span><span class="val">101 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:23.60739535660919%;background-color:#eff5fa;"></span><span class="val">25.8</span></div></td></tr><tr><th class="rowheader">SRR792922_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:1.15013%;background-color:#b3d3c4;"></span><span class="val">1.2%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:91.712%;background-color:#b5cee2;"></span><span class="val">91.7%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:39.36799851332958%;background-color:#e3f4e9;"></span><span class="val">7<span class="mqc_thousandSep"></span>900.2</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:41.5347%;background-color:#ddecf5;"></span><span class="val">41.5%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:94.0173277593014%;background-color:#b3cdbd;"></span><span class="val">94.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:3.1415478075118948%;background-color:#b5d6c5;"></span><span class="val">3.1%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">SRR792922_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.657903557251828%;background-color:#b7dac7;"></span><span class="val">5.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.7834545071524%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:39.47776608679333%;background-color:#dfeef5;"></span><span class="val">43.2</span></div></td></tr><tr><th class="rowheader">SRR792922_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.75667170864601%;background-color:#b7dac7;"></span><span class="val">5.8%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.7834545071524%;background-color:#b3d3c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:39.47776608679333%;background-color:#dfeef5;"></span><span class="val">43.2</span></div></td></tr><tr><th class="rowheader">SRR792936_1.filt</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"><div class="wrapper"><span class="bar" style="width:0.917982%;background-color:#b3d3c4;"></span><span class="val">0.9%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"><div class="wrapper"><span class="bar" style="width:91.0349%;background-color:#b5cee2;"></span><span class="val">91.0%</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"><div class="wrapper"><span class="bar" style="width:34.89885227261041%;background-color:#e7f6ea;"></span><span class="val">7<span class="mqc_thousandSep"></span>003.4</span></div></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"><div class="wrapper"><span class="bar" style="width:41.8136%;background-color:#ddecf5;"></span><span class="val">41.8%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"><div class="wrapper"><span class="bar" style="width:93.30206534540427%;background-color:#b3cdbd;"></span><span class="val">93.3%</span></div></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"><div class="wrapper"><span class="bar" style="width:3.724334829471107%;background-color:#b5d7c6;"></span><span class="val">3.7%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"></td></tr><tr><th class="rowheader">SRR792936_1.filt.fP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.577017437885019%;background-color:#b7dac7;"></span><span class="val">5.6%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.73823469041815%;background-color:#b3d4c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:0.0%;background-color:#fffcfb;"></span><span class="val">0%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:35.27260325357837%;background-color:#e4f0f7;"></span><span class="val">38.6</span></div></td></tr><tr><th class="rowheader">SRR792936_2.filt.rP</th><td class="data-coloured mqc-generalstats-fastp-pct_duplication"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_rate hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_q30_bases hidden"></td><td class="data-coloured mqc-generalstats-fastp-after_filtering_gc_content"></td><td class="data-coloured mqc-generalstats-fastp-pct_surviving"></td><td class="data-coloured mqc-generalstats-fastp-pct_adapter"></td><td class="data-coloured mqc-generalstats-fastqc-percent_duplicates"><div class="wrapper"><span class="bar" style="width:5.5088093264041476%;background-color:#b7dac7;"></span><span class="val">5.5%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_gc"><div class="wrapper"><span class="bar" style="width:41.0%;background-color:#e9ced6;"></span><span class="val">41%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-avg_sequence_length hidden"><div class="wrapper"><span class="bar" style="width:98.73823469041815%;background-color:#b3d4c4;"></span><span class="val">100 bp</span></div></td><td class="data-coloured mqc-generalstats-fastqc-percent_fails hidden"><div class="wrapper"><span class="bar" style="width:9.090909090909092%;background-color:#fff7f4;"></span><span class="val">9%</span></div></td><td class="data-coloured mqc-generalstats-fastqc-total_sequences"><div class="wrapper"><span class="bar" style="width:35.27260325357837%;background-color:#e4f0f7;"></span><span class="val">38.6</span></div></td></tr></tbody></table></div><div class="mqc-table-expand"><span class="glyphicon glyphicon-chevron-down"></span></div></div>
+    
+    <div class="modal fade">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span>&#215;</span>
+            <h4 class="modal-title">General Statistics: Columns</h4>
+          </div>
+          <div class="modal-body">
+            <p>Uncheck the tick box to hide columns. Click and drag the handle on the left to change order.</p>
+            <p>
+                Show All
+                Show None
+            </p>
+            <table class="table mqc_table mqc_sortable mqc_configModal_table">
+              <thead>
+                <tr>
+                  <th class="sorthandle" style="text-align:center;">Sort</th>
+                  <th style="text-align:center;">Visible</th>
+                  <th>Group</th>
+                  <th>Column</th>
+                  <th>Description</th>
+                  <th>ID</th>
+                  <th>Scale</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+        <tr class="mqc-generalstats-fastp-pct_duplication" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>fastp</td>
+          <td>% Duplication</td>
+          <td>Duplication rate in filtered reads</td>
+          <td><code>pct_duplication</code></td>
+          <td>None</td>
+        </tr>
+        <tr class="mqc-generalstats-fastp-after_filtering_q30_rate text-muted" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>fastp</td>
+          <td>% &gt; Q30</td>
+          <td>Percentage of reads &gt; Q30 after filtering</td>
+          <td><code>after_filtering_q30_rate</code></td>
+          <td>None</td>
+        </tr>
+        <tr class="mqc-generalstats-fastp-after_filtering_q30_bases text-muted" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>fastp</td>
+          <td>Mb Q30 bases</td>
+          <td>Bases &gt; Q30 after filtering (millions)</td>
+          <td><code>after_filtering_q30_bases</code></td>
+          <td>base_count</td>
+        </tr>
+        <tr class="mqc-generalstats-fastp-after_filtering_gc_content" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>fastp</td>
+          <td>GC content</td>
+          <td>GC content after filtering</td>
+          <td><code>after_filtering_gc_content</code></td>
+          <td>None</td>
+        </tr>
+        <tr class="mqc-generalstats-fastp-pct_surviving" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>fastp</td>
+          <td>% PF</td>
+          <td>Percent reads passing filter</td>
+          <td><code>pct_surviving</code></td>
+          <td>None</td>
+        </tr>
+        <tr class="mqc-generalstats-fastp-pct_adapter" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>fastp</td>
+          <td>% Adapter</td>
+          <td>Percentage adapter-trimmed reads</td>
+          <td><code>pct_adapter</code></td>
+          <td>None</td>
+        </tr>
+        <tr class="mqc-generalstats-fastqc-percent_duplicates" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>FastQC</td>
+          <td>% Dups</td>
+          <td>% Duplicate Reads</td>
+          <td><code>percent_duplicates</code></td>
+          <td>None</td>
+        </tr>
+        <tr class="mqc-generalstats-fastqc-percent_gc" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>FastQC</td>
+          <td>% GC</td>
+          <td>Average % GC Content</td>
+          <td><code>percent_gc</code></td>
+          <td>None</td>
+        </tr>
+        <tr class="mqc-generalstats-fastqc-avg_sequence_length text-muted" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>FastQC</td>
+          <td>Length</td>
+          <td>Average Sequence Length (bp)</td>
+          <td><code>avg_sequence_length</code></td>
+          <td>None</td>
+        </tr>
+        <tr class="mqc-generalstats-fastqc-percent_fails text-muted" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>FastQC</td>
+          <td>% Failed</td>
+          <td>Percentage of modules failed in FastQC report (includes those not plotted here)</td>
+          <td><code>percent_fails</code></td>
+          <td>None</td>
+        </tr>
+        <tr class="mqc-generalstats-fastqc-total_sequences" style="background-color: rgba;">
+          <td class="sorthandle ui-sortable-handle">||</td>
+          <td style="text-align:center;">
+            
+          </td>
+          <td>FastQC</td>
+          <td>M Seqs</td>
+          <td>Total Sequences (millions)</td>
+          <td><code>total_sequences</code></td>
+          <td>read_count</td>
+        </tr>
+              </tbody>
+            </table>
+        </div>
+        <div class="modal-footer"> Close </div>
+    </div> </div> </div>
+</div>
+
+
+  
+
+
+  
+  <div class="mqc-module-section">
+    <h2>fastp</h2>
+    <p><a rel="noopener" href="https://github.com/OpenGene/fastp" target="_blank">fastp</a> An ultra-fast all-in-one FASTQ preprocessor (QC, adapters, trimming, filtering, splitting...)</p>
+    
+    
+      
+        
+        <div class="mqc-section mqc-section-fastp">
+          
+            <h3>
+                Filtered Reads
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>Filtering statistics of sampled reads.</p></div>
+          
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="btn-group hc_switch_group"> 
+Number of Reads 
+Percentages 
+</div> <div class="hc-plot-wrapper">
+        <div class="hc-plot not_rendered hc-bar-plot"><small>loading..</small></div>
+    </div></div></div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastp">
+          
+            <h3>
+                Duplication Rates
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>Duplication rates of sampled reads.</p></div>
+          
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastp">
+          
+            <h3>
+                Insert Sizes
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>Insert size estimation of sampled reads.</p></div>
+          
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastp">
+          
+            <h3>
+                Sequence Quality
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>Average sequencing quality over each base of all reads.</p></div>
+          
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="btn-group hc_switch_group">
+Read 1: Before filtering
+Read 1: After filtering
+Read 2: Before filtering
+Read 2: After filtering
+</div>
+
+<div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastp">
+          
+            <h3>
+                GC Content
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>Average GC content over each base of all reads.</p></div>
+          
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="btn-group hc_switch_group">
+Read 1: Before filtering
+Read 1: After filtering
+Read 2: Before filtering
+Read 2: After filtering
+</div>
+
+<div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastp">
+          
+            <h3>
+                N content
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>Average N content over each base of all reads.</p></div>
+          
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="btn-group hc_switch_group">
+Read 1: Before filtering
+Read 1: After filtering
+Read 2: Before filtering
+Read 2: After filtering
+</div>
+
+<div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          
+        </div>
+      
+  
+  </div>
+  <hr/>
+  
+
+  
+  <div class="mqc-module-section">
+    <h2>FastQC</h2>
+    <p><a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/" target="_blank">FastQC</a> is a quality control tool for high throughput sequence data, written by Simon Andrews at the Babraham Institute in Cambridge.</p>
+    
+    
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Sequence Counts
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>Sequence counts for each sample. Duplicate read counts are an estimate only.</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>This plot show the total number of reads, broken down into unique and duplicate
+if possible (only more recent versions of FastQC give duplicate info).</p>
+<p>You can read more about duplicate calculation in the
+<a rel="noopener" href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/8%20Duplicate%20Sequences.html">FastQC documentation</a>.
+A small part has been copied here for convenience:</p>
+<p><em>Only sequences which first appear in the first 100,000 sequences
+in each file are analysed. This should be enough to get a good impression
+for the duplication levels in the whole file. Each sequence is tracked to
+the end of the file to give a representative count of the overall duplication level.</em></p>
+<p><em>The duplication detection requires an exact sequence match over the whole length of
+the sequence. Any reads over 75bp in length are truncated to 50bp for this analysis.</em></p></div>
+            </div>
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="btn-group hc_switch_group"> 
+Number of reads 
+Percentages 
+</div> <div class="hc-plot-wrapper">
+        <div class="hc-plot not_rendered hc-bar-plot"><small>loading..</small></div>
+    </div></div></div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Sequence Quality Histograms
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>The mean quality value across each base position in the read.</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>To enable multiple samples to be plotted on the same graph, only the mean quality
+scores are plotted (unlike the box plots seen in FastQC reports).</p>
+<p>Taken from the <a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/2%20Per%20Base%20Sequence%20Quality.html">FastQC help</a>:</p>
+<p><em>The y-axis on the graph shows the quality scores. The higher the score, the better
+the base call. The background of the graph divides the y axis into very good quality
+calls (green), calls of reasonable quality (orange), and calls of poor quality (red).
+The quality of calls on most platforms will degrade as the run progresses, so it is
+common to see base calls falling into the orange area towards the end of a read.</em></p></div>
+            </div>
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Per Sequence Quality Scores
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>The number of reads with average quality scores. Shows if a subset of reads has poor quality.</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>From the <a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/3%20Per%20Sequence%20Quality%20Scores.html">FastQC help</a>:</p>
+<p><em>The per sequence quality score report allows you to see if a subset of your
+sequences have universally low quality values. It is often the case that a
+subset of sequences will have universally poor quality, however these should
+represent only a small percentage of the total sequences.</em></p></div>
+            </div>
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Per Base Sequence Content
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>The proportion of each base position for which each of the four normal DNA bases has been called.</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>To enable multiple samples to be shown in a single plot, the base composition data
+is shown as a heatmap. The colours represent the balance between the four bases:
+an even distribution should give an even muddy brown colour. Hover over the plot
+to see the percentage of the four bases under the cursor.</p>
+<p><strong>To see the data as a line plot, as in the original FastQC graph, click on a sample track.</strong></p>
+<p>From the <a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/4%20Per%20Base%20Sequence%20Content.html">FastQC help</a>:</p>
+<p><em>Per Base Sequence Content plots out the proportion of each base position in a
+file for which each of the four normal DNA bases has been called.</em></p>
+<p><em>In a random library you would expect that there would be little to no difference
+between the different bases of a sequence run, so the lines in this plot should
+run parallel with each other. The relative amount of each base should reflect
+the overall amount of these bases in your genome, but in any case they should
+not be hugely imbalanced from each other.</em></p>
+<p><em>It&#39;s worth noting that some types of library will always produce biased sequence
+composition, normally at the start of the read. Libraries produced by priming
+using random hexamers (including nearly all RNA-Seq libraries) and those which
+were fragmented using transposases inherit an intrinsic bias in the positions
+at which reads start. This bias does not concern an absolute sequence, but instead
+provides enrichement of a number of different K-mers at the 5&#39; end of the reads.
+Whilst this is a true technical bias, it isn&#39;t something which can be corrected
+by trimming and in most cases doesn&#39;t seem to adversely affect the downstream
+analysis.</em></p></div>
+            </div>
+          
+          <div class="mqc-section-plot"></div>
+          <div>
+            <div class="alert alert-info">
+               <span class="glyphicon glyphicon-hand-up"></span>
+               Click a sample row to see a line plot for that dataset.
+            </div>
+            <h5><span class="s_name text-primary"><span class="glyphicon glyphicon-info-sign"></span> Rollover for sample name</span></h5>
+            <span class="glyphicon glyphicon-download-alt"></span> Export Plot
+            <div class="fastqc_seq_heatmap_key">
+                Position: <span>-</span>
+                <div><span> %T: <span>-</span></span></div>
+                <div><span> %C: <span>-</span></span></div>
+                <div><span> %A: <span>-</span></span></div>
+                <div><span> %G: <span>-</span></span></div>
+            </div>
+            <div class="fastqc-overlay-plot">
+                <div class="fastqc_per_base_sequence_content_plot hc-plot has-custom-export">
+                    <canvas height="100%" width="800px" style="width:100%;"></canvas>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        
+        
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Per Sequence GC Content
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>The average GC content of reads. Normal random library typically have a
+        roughly normal distribution of GC content.</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>From the <a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/5%20Per%20Sequence%20GC%20Content.html">FastQC help</a>:</p>
+<p><em>This module measures the GC content across the whole length of each sequence
+in a file and compares it to a modelled normal distribution of GC content.</em></p>
+<p><em>In a normal random library you would expect to see a roughly normal distribution
+of GC content where the central peak corresponds to the overall GC content of
+the underlying genome. Since we don&#39;t know the the GC content of the genome the
+modal GC content is calculated from the observed data and used to build a
+reference distribution.</em></p>
+<p><em>An unusually shaped distribution could indicate a contaminated library or
+some other kinds of biased subset. A normal distribution which is shifted
+indicates some systematic bias which is independent of base position. If there
+is a systematic bias which creates a shifted normal distribution then this won&#39;t
+be flagged as an error by the module since it doesn&#39;t know what your genome&#39;s
+GC content should be.</em></p></div>
+            </div>
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="btn-group hc_switch_group">
+Percentages
+Counts
+</div>
+
+<div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Per Base N Content
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>The percentage of base calls at each position for which an <code>N</code> was called.</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>From the <a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/6%20Per%20Base%20N%20Content.html">FastQC help</a>:</p>
+<p><em>If a sequencer is unable to make a base call with sufficient confidence then it will
+normally substitute an <code>N</code> rather than a conventional base call. This graph shows the
+percentage of base calls at each position for which an <code>N</code> was called.</em></p>
+<p><em>It&#39;s not unusual to see a very low proportion of Ns appearing in a sequence, especially
+nearer the end of a sequence. However, if this proportion rises above a few percent
+it suggests that the analysis pipeline was unable to interpret the data well enough to
+make valid base calls.</em></p></div>
+            </div>
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Sequence Length Distribution
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>The distribution of fragment sizes (read lengths) found.
+                    See the <a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/7%20Sequence%20Length%20Distribution.html">FastQC help</a></p></div>
+          
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Sequence Duplication Levels
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>The relative level of duplication found for every sequence.</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>From the <a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/8%20Duplicate%20Sequences.html">FastQC Help</a>:</p>
+<p><em>In a diverse library most sequences will occur only once in the final set.
+A low level of duplication may indicate a very high level of coverage of the
+target sequence, but a high level of duplication is more likely to indicate
+some kind of enrichment bias (eg PCR over amplification). This graph shows
+the degree of duplication for every sequence in a library: the relative
+number of sequences with different degrees of duplication.</em></p>
+<p><em>Only sequences which first appear in the first 100,000 sequences
+in each file are analysed. This should be enough to get a good impression
+for the duplication levels in the whole file. Each sequence is tracked to
+the end of the file to give a representative count of the overall duplication level.</em></p>
+<p><em>The duplication detection requires an exact sequence match over the whole length of
+the sequence. Any reads over 75bp in length are truncated to 50bp for this analysis.</em></p>
+<p><em>In a properly diverse library most sequences should fall into the far left of the
+plot in both the red and blue lines. A general level of enrichment, indicating broad
+oversequencing in the library will tend to flatten the lines, lowering the low end
+and generally raising other categories. More specific enrichments of subsets, or
+the presence of low complexity contaminants will tend to produce spikes towards the
+right of the plot.</em></p></div>
+            </div>
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-line-plot"><small>loading..</small></div></div></div> 
+</div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Overrepresented sequences
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>The total amount of overrepresented sequences found in each library.</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>FastQC calculates and lists overrepresented sequences in FastQ files. It would not be
+possible to show this for all samples in a MultiQC report, so instead this plot shows
+the <em>number of sequences</em> categorized as over represented.</p>
+<p>Sometimes, a single sequence  may account for a large number of reads in a dataset.
+To show this, the bars are split into two: the first shows the overrepresented reads
+that come from the single most common sequence. The second shows the total count
+from all remaining overrepresented sequences.</p>
+<p>From the <a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/9%20Overrepresented%20Sequences.html">FastQC Help</a>:</p>
+<p><em>A normal high-throughput library will contain a diverse set of sequences, with no
+individual sequence making up a tiny fraction of the whole. Finding that a single
+sequence is very overrepresented in the set either means that it is highly biologically
+significant, or indicates that the library is contaminated, or not as diverse as you expected.</em></p>
+<p><em>FastQC lists all of the sequences which make up more than 0.1% of the total.
+To conserve memory only sequences which appear in the first 100,000 sequences are tracked
+to the end of the file. It is therefore possible that a sequence which is overrepresented
+but doesn&#39;t appear at the start of the file for some reason could be missed by this module.</em></p></div>
+            </div>
+          
+          <div class="mqc-section-plot"><div class="alert alert-info">42 samples had less than 1% of reads made up of overrepresented sequences</div></div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Adapter Content
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>The cumulative percentage count of the proportion of your
+            library which has seen each of the adapter sequences at each position.</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>Note that only samples with ≥ 0.1% adapter contamination are shown.</p>
+<p>There may be several lines per sample, as one is shown for each adapter
+detected in the file.</p>
+<p>From the <a rel="noopener" href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/10%20Adapter%20Content.html">FastQC Help</a>:</p>
+<p><em>The plot shows a cumulative percentage count of the proportion
+of your library which has seen each of the adapter sequences at each position.
+Once a sequence has been seen in a read it is counted as being present
+right through to the end of the read so the percentages you see will only
+increase as the read length goes on.</em></p></div>
+            </div>
+          
+          <div class="mqc-section-plot"><div class="alert alert-info">No samples found with any adapter contamination &gt; 0.1%</div></div>
+          
+          <hr/>
+        </div>
+      
+  
+      
+        
+        <div class="mqc-section mqc-section-fastqc">
+          
+            <h3>
+                Status Checks
+                
+                  
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                    Help
+                  
+                
+            </h3>
+          
+          <div class="mqc-section-description"><p>Status for each FastQC section showing whether results seem entirely normal (green),
+slightly abnormal (orange) or very unusual (red).</p></div>
+          
+          
+            <div class="collapse mqc-section-helptext">
+              <div class="well"><p>FastQC assigns a status for each section of the report.
+These give a quick evaluation of whether the results of the analysis seem
+entirely normal (green), slightly abnormal (orange) or very unusual (red).</p>
+<p>It is important to stress that although the analysis results appear to give a pass/fail result,
+these evaluations must be taken in the context of what you expect from your library.
+A &#39;normal&#39; sample as far as FastQC is concerned is random and diverse.
+Some experiments may be expected to produce libraries which are biased in particular ways.
+You should treat the summary evaluations therefore as pointers to where you should concentrate
+your attention and understand why your library may not look random and diverse.</p>
+<p>Specific guidance on how to interpret the output of each module can be found in the relevant
+report section, or in the <a rel="noopener" href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/">FastQC help</a>.</p>
+<p>In this heatmap, we summarise all of these into a single heatmap for a quick overview.
+Note that not all FastQC sections have plots in MultiQC reports, but all status checks
+are shown in this heatmap.</p></div>
+            </div>
+          
+          <div class="mqc-section-plot"><div class="mqc_hcplot_plotgroup"><div class="btn-group hc_switch_group">
+        
+            <span class="glyphicon glyphicon-sort-by-attributes-alt"></span> Sort by highlight
+        
+    </div><div class="hc-plot-wrapper"><div class="hc-plot not_rendered hc-heatmap"><small>loading..</small></div></div></div> 
+</div>
+          
+          
+        </div>
+      
+  
+  </div>
+  
+  
+
+
+</div>
+
+<div class="footer">
+  <div class="container-fluid">
+    
+
+<p>
+    <a rel="noopener" href="http://www.scilifelab.se/" target="_blank" class="pull-right">
+        <img src="javascript://" style="height:41px;"/>
+    </a>
+    <strong>
+        <a rel="noopener" href="http://multiqc.info" target="_blank">MultiQC v1.9</a>
+    </strong>
+    - Written by <a rel="noopener" href="http://phil.ewels.co.uk" target="_blank">Phil Ewels</a>,
+    available on <a rel="noopener" href="https://github.com/ewels/MultiQC" target="_blank">GitHub</a>.
+</p>
+<p>
+    This report uses <a rel="noopener" href="http://www.highcharts.com/" target="_blank">HighCharts</a>,
+    <a rel="noopener" href="https://jquery.com/" target="_blank">jQuery</a>,
+    <a rel="noopener" href="https://jqueryui.com/" target="_blank">jQuery UI</a>,
+    <a rel="noopener" href="http://getbootstrap.com/" target="_blank">Bootstrap</a>,
+    <a rel="noopener" href="https://github.com/eligrey/FileSaver.js" target="_blank">FileSaver.js</a> and
+    <a rel="noopener" href="https://clipboardjs.com/" target="_blank">clipboard.js</a>.
+</p>
+  </div>
+</div>
+
+
+
+
+
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>&#215;</span>
+        <h3 class="modal-title">Plot Table Data</h3>
+      </div>
+      <div class="modal-body">
+        
+          
+          <div class="row">
+            <div class="col-sm-6">
+              
+                <option value="">Select Column</option>
+              
+            </div>
+            <div class="col-sm-6">
+              
+                <option value="">Select Column</option>
+              
+            </div>
+          </div>
+          <div class="hc-plot-wrapper">
+            <div class="hc-plot not_rendered hc-scatter-plot no-handle" style="width:566px;height: 510px;">
+              <small>Please select two table columns.</small>
+            </div>
+          </div>
+        
+      </div>
+      <div class="modal-footer">
+        Close
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>&#215;</span>
+        <h3 class="modal-title">Regex Help</h3>
+      </div>
+      <div class="modal-body">
+        <p>Toolbox search strings can behave as regular expressions (regexes). Click a button below to see an example of it in action. Try modifying them yourself in the text box.</p>
+        <div class="row">
+          <div class="col-sm-6 regex_example_buttons">
+            <code>^</code> (start of string)
+            <code>$</code> (end of string)
+            <code>[]</code> (character choice)
+            <code>\d</code> (shorthand for <code>[0-9]</code>)
+            <code>\w</code> (shorthand for <code>[0-9a-zA-Z_]</code>)
+            <code>.</code> (any character)
+            <code>\.</code> (literal full stop)
+            <code>()</code> <code>|</code> (group / separator)
+            <code>*</code> (prev char 0 or more)
+            <code>+</code> (prev char 1 or more)
+            <code>?</code> (prev char 0 or 1)
+            <code>{}</code> (char num times)
+            <code>{,}</code> (count range)
+          </div>
+          <div class="col-sm-6 regex_example_demo">
+            
+<pre>
+<span>samp_1</span>
+<span>samp_1_edited</span>
+<span>samp_2</span>
+<span>samp_2_edited</span>
+<span>samp_3</span>
+<span>samp_3_edited</span>
+<span>prepended_samp_1</span>
+<span>tmp_samp_1_edited</span>
+<span>tmpp_samp_1_edited</span>
+<span>tmppp_samp_1_edited</span>
+<span>#samp_1_edited.tmp</span>
+<span>samp_11</span>
+<span>samp_11111</span>
+</pre>
+            <p>See <a rel="noopener" href="https://regex101.com/" target="_blank">regex101.com</a> for a more heavy duty testing suite.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        Close
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script type="module" src="https://s.brightspace.com/lib/bsi/20.23.8-201/unbundled/mathjax.js"></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() {
+					if (document.querySelector('math') || /\$\$|\\\(|\\\[|\\begin{|\\ref{|\\eqref{/.test(document.body.innerHTML)) {
+						document.querySelectorAll('mspace[linebreak="newline"]').forEach(elm => {
+							elm.setAttribute('style', 'display: block; height: 0.5rem;');
+						});
+
+						window.D2L.MathJax.loadMathJax({
+							'outputScale': 1.5,
+							'renderLatex': true
+						});
+					}
+				});</script><script type="module" src="https://s.brightspace.com/lib/bsi/20.23.8-201/unbundled/prism.js"></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() {
+					document.querySelectorAll('.d2l-code').forEach(code => {
+						window.D2L.Prism.formatCodeElement(code);
+					});
+				});</script></body></html>

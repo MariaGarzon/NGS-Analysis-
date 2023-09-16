@@ -1,0 +1,314 @@
+---
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+#### Task 1: Run a slurm job to process raw fastq data with fastp of one sample
+
+fastp: tool for base quality trimming, adapter trimming, 
+detecting Illumina adapters without the need to pass a library of 
+adapter sequences and eliminating artifacts (i.e., polyG sequences)
+that are specific to the latest Illumina sequencing platforms such as
+NextSeq and NovaSeq.
+
+Begin by reviewing the fastp Github page:
+`https://github.com/OpenGene/fastp`
+
+1. Run fastp on the fastq files for human sample HG00149 located
+on Greene at the following paths: 
+
+```{bash}
+/scratch/work/courses/BI7653/hw2.2023/ERR156634_1.filt.fastq.gz
+/scratch/work/courses/BI7653/hw2.2023/ERR156634_2.filt.fastq.gz
+```
+
+a. Log into Greene and check out a compute node.
+
+```{bash}
+srun --time=4:00:00 --mem=4GB --pty /bin/bash
+```
+
+
+```{bash}
+#!/bin/bash
+#
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=4:00:00
+#SBATCH --mem=4GB
+#SBATCH --job-name=slurm_template
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module purge
+echo script begin: $(date)
+# Load the most recent fastp module
+module load fastp
+
+# fastp command to execute fastp on the paired ends of fastqs listed above
+# Retain only 76 bp's, Tolerate up to 50 Ns in reads and detect paired-end adapter trimming.
+
+fastp --detect_adapter_for_pe \
+      --length_required 76 \
+      --n_base_limit 50 \
+      -i /scratch/work/courses/BI7653/hw2.2023/ERR156634_1.filt.fastq.gz \
+      -I /scratch/work/courses/BI7653/hw2.2023/ERR156634_2.filt.fastq.gz \
+      -o /scratch/work/courses/BI7653/hw2.2023/ERR156634_1.filt.fastp.fastq.gz \
+      -O /scratch/work/courses/BI7653/hw2.2023/ERR156634_2.filt.fastp.fastq.gz
+
+echo script completed: $(date)
+```
+
+**job id.**
+
+30213025
+
+\*\*exit status of job usig the `seff` command = zero meaning the job completed without errors.
+
+During read processing, it is common that a tool such as fastp will
+filter a read from one fastq file (e.g., because it is shorter than the
+minimum length), but its mated read in the second fastq file will NOT
+survive the filter. **Preserving the number and order of short read
+records in paired-end fastq files is critical**. Therefore, fastp will
+discard BOTH reads if one read fails the read length threshold (or any
+other filters that may have been specified).
+
+Alternatively fastp has an option to write "orphaned" reads that pass
+filter (but whose mates failed filters) to additional output files
+should you wish to retain single-end reads for downstream analysis.
+
+Here we have adopted the default behavior and will only work with read
+pairs where both reads passed QC.
+
+## STDOUT file
+
+### percentage of the bases were Phred quality of Q30 or above in each of the original and processed fastqs?
+
+### Phred quality scores (Q): measure the accuracy of base calls. The scores are logarithmically related to the base-calling error probabilities. A higher Q score indicates higher confidence in the accuracy of the base call.
+
+For the original fastqs:
+
+Read1: Q30 bases: 1654818604 (94.3776%)
+Read2: Q30 bases: 1604981035 (91.5352%)
+
+For the processed fastqs:
+
+Read1: Q30 bases: 1628465308 (94.7822%)
+Read2: Q30 bases: 1588178177 (92.4373%)
+
+The % of bases with a Phred quality score > Q30 is higher in the processed fastqs compared to the original fastqs for both Read2, but not for Read1 they are similar. 
+
+### Filtering result section of the output and the duplication rate
+
+Filtering result:
+reads passed filter: 34367822
+reads failed due to low quality: 541724
+reads failed due to too many N: 0
+reads failed due to too short: 158504
+reads with adapter trimmed: 201414
+bases trimmed due to adapters: 9134238
+
+The "Filtering result" section reports the number of reads that passed the filter, as well as the number of reads that failed due to low quality, too short, or with adapter trimming applied. Additionally, the number of bases trimmed due to adapters is also reported.
+
+The duplication rate is reported as 0.768038%, which indicates the percentage of reads that were duplicates. 
+
+#### Run fastp and fastqc to process reads in parallel from a set of 21 samples from the 1000 Genomes Project using sbatch
+
+The fastqs are from 2 X 100 PE runs from the 1000 Genomes Project referenced above.
+
+"2" indicates paired-end (PE), which means that for each DNA fragment or molecule, two reads are generated—one from the forward direction and one from the reverse direction.
+"100" indicates the length of each read in base pairs. 
+
+```{bash}
+less wk2_task2.sh  # type q to exit when done
+```
+
+The script uses a table located at
+`/scratch/work/courses/BI7653/hw2.2023/week2_fastqs.txt` to identify
+samples and their fastq files. 
+This table is tab-delimited with 3 columns containing:
+sample name, forward fastq file name, reverse fastq file name
+
+#SBATCH –array=1-21: create a job array with 21 parallel instances of a script. 
+
+# SLURM_ARRAY_TASK_ID Environmental Variable: When you use the --array, it automatically creates an environmental variable called SLURM_ARRAY_TASK_ID.
+
+# For each instance, SLURM_ARRAY_TASK_ID will be set to a value between 1 and 21 = index of the instance. 
+
+# Remainder of the script creates:
+1. a sample directory
+2. changes directories to that directory
+3. executes fastp and fastqc and then writes the outputs in that directory.
+
+
+```{bash}
+#!/bin/bash
+#
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=8:00:00
+#SBATCH --mem=4GB
+#SBATCH --job-name=fastp_array
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=<mpg85963@nyu.edu>
+#SBATCH --array=1-21
+
+#run both fastp and fastqc on processed reads in parallel from a set of 21 samples from the 1000 Genomes Project.
+module purge
+
+# Path to 3-column (tab-delimited) table with sample name, fastq 1 file name, and fastq 2 file name
+table=/scratch/work/courses/BI7653/hw2.2023/week2_fastqs.txt
+
+
+# Define sample, fq1 and fq2 variables for current array index
+# note: SLURM_ARRAY_TASK_ID environmental variable will contain a single value corresponding to the current array index
+
+line="$(head -n $SLURM_ARRAY_TASK_ID $table | tail -n 1)"
+sample="$(printf "%s" "${line}" | cut -f1)"
+fq1="$(printf "%s" "${line}" | cut -f2)"
+fq2="$(printf "%s" "${line}" | cut -f3)"
+
+# Print to standard out the array index and the sample name
+echo Processing array index: $SLURM_ARRAY_TASK_ID sample: $sample
+
+
+# Make a directory for the sample and cd to it
+mkdir $sample
+cd $sample
+
+
+# define output filenames. This will add "fP" (=forward paired) and "rP" (=reverse paired) to output file names
+fq1_fastp=$(basename $fq1 .fastq.gz).fP.fastq.gz
+fq2_fastp=$(basename $fq2 .fastq.gz).rP.fastq.gz
+
+
+# Load the fastp software module
+module load fastp/intel/0.20.1
+
+# Define directory where fastqs are located
+fqdir=/scratch/work/courses/BI7653/hw2.2023
+
+# Run fastp on sample fastqs
+
+# note: we discard read pairs where either read is < 76 bp after trimming
+# note: we use "*fastp.json" extension to ensure compatibility with MultiQC
+fastp -i $fqdir/$fq1 \
+-I $fqdir/$fq2 \
+-o $fq1_fastp \
+-O $fq2_fastp \
+--length_required 76 \
+--detect_adapter_for_pe \
+--n_base_limit 50 \
+--html $sample.fastp.html \
+--json $sample.fastp.json
+
+# Print the exit status of the fastp command and the time the script ended to standard out
+echo _ESTATUS_ [ fastp for $sample ]: $?
+
+
+# Purge fastp and load fastqc module
+module purge
+module load fastqc/0.11.9
+
+# Run fastqc
+fastqc $fq1_fastp $fq2_fastp
+echo _ESTATUS_ [ fastqc for $sample ]: $?
+echo _END_ [ fastp for $sample ]: $(date)
+```
+
+
+## Each array index will have its own STDERR and STDOUT. 
+
+#### Were any adapter sequences detected?
+The program detected that no adapters were present in either of the reads.
+
+#### How many reads were in the read 1 set before filtering? R
+58521629
+
+**Q2.1c How many reads survived filtering in Read 1 set? Read 2?**
+55124556
+55124556
+
+**Q2.1d What percentage of reads survived filtering in Read 1 set?**
+(55124556 / 58521629) * 100 = 94.175%
+
+## Example of index 1: 
+
+Processing array index: 1 sample: NA18757
+Detecting adapter sequence for read1...
+No adapter detected for read1
+
+Detecting adapter sequence for read2...
+No adapter detected for read2
+
+Read1 before filtering:
+total reads: 58521629
+total bases: 5910684529
+Q20 bases: 5700891751(96.4506%)
+Q30 bases: 5376153278(90.9565%)
+
+Read2 before filtering:
+total reads: 58521629
+total bases: 5910684529
+Q20 bases: 5587494577(94.5321%)
+Q30 bases: 5236863942(88.6%)
+
+Read1 after filtering:
+total reads: 55124556
+total bases: 5566101957
+Q20 bases: 5450378785(97.9209%)
+Q30 bases: 5169068074(92.8669%)
+
+Read2 aftering filtering:
+total reads: 55124556
+total bases: 5566101957
+Q20 bases: 5410523196(97.2049%)
+Q30 bases: 5092424228(91.49%)
+
+Filtering result:
+reads passed filter: 110249112
+reads failed due to low quality: 6081064
+reads failed due to too many N: 0
+reads failed due to too short: 713082
+reads with adapter trimmed: 949358
+bases trimmed due to adapters: 43433322
+
+Duplication rate: 1.01555%
+
+Insert size peak (evaluated by paired-end reads): 171
+
+JSON report: NA18757.fastp.json
+HTML report: NA18757.fastp.html
+
+#### Task 3: Generate a multi-sample QC report with MultiQC
+
+Use MultiQC to parse the outputs from FastQC outputs and generate a report for visual inspection of library quality.
+
+
+```{bash}
+cd <your Task 2 directory>
+find $PWD -name \*fastqc.zip > fastqc_files.txt # adding the $PWD to the find command makes sure the file paths we extract are from root
+less fastqc_files.txt # type q to exit
+```
+
+The fastqc_files.txt file should have paths to 42 files representing
+\*fastqc.zip reports for forward and reverse reads for the 21 samples.
+We will use this to run MultiQC to generate a single consolidated report
+for all fastqc outputs.
+
+### multiqc command
+multiqc . -o multiqc_report/
+
+#### fastq file has the greatest decline in base quality with increasing sequencing cycle
+ERR251551.1.filt.fp
+
+#### Two samples (four fastqs) appear to have unusually high GC content and unusually high duplication levels
+SRR766045.1
+SSR70273.1
+
+### No samples found with any adapter contamination > 0.1%
+
+#### You are finished, please review the Completing your assignment section above before submitting your report.

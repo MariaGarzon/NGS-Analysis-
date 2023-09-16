@@ -1,0 +1,508 @@
+---
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+#### Task 1: Run a slurm job to process raw fastq data with fastp
+
+fastp is a tool that integrates many of the benefits of older tools such
+as Trimmomatic (frequently used in base quality trimming) and cutadapt
+(frequently used for adapter trimming), while adding additional
+features. For example, fastp automatically detects Illumina adapters
+without the need to pass a library of adapter sequences and can
+eliminate artifacts (i.e., polyG sequences; see pre-recorded videos)
+that are specific to the latest Illumina sequencing platforms such as
+NextSeq and NovaSeq.
+
+Begin by reviewing the fastp Github page:
+`https://github.com/OpenGene/fastp`
+
+You will run fastp on the fastq files for human sample HG00149 located
+on Greene at the following paths. **This is an example where you run a
+job on a single sample. In Task 2, you will learn how to run a job on
+many samples in parallel.**
+
+```{bash}
+/scratch/work/courses/BI7653/hw2.2023/ERR156634_1.filt.fastq.gz
+/scratch/work/courses/BI7653/hw2.2023/ERR156634_2.filt.fastq.gz
+```
+
+You will now create a job submission script to execute fastp on the
+above paired end files.
+
+**It is best practice to NOT copy the fastq files (or any other large
+file) from its existing location in the course directory to your
+`/scratch` directory. Instead, you should paste the full paths into the
+input file arguments to fastp. This prevents unnecessary redundancy of
+large files on the HPC and preserves disk space.**
+
+Begin by logging into Greene and checking out a compute node.
+
+```{bash}
+srun --time=4:00:00 --mem=4GB --pty /bin/bash
+```
+
+Now create a new directory `ngs.week2` in your `/scratch` directory. Now
+cd into the new `ngs.week2` and create three subdirectories for each
+tasks 1-3 below.
+
+\*\*Tip: always avoid use of white spaces when naming directories or
+files in Unix (or Windows for that matter) to save yourself unnecessary
+problems in workflows or when specifying paths to files. It is common to
+use underscore "\_" instead of white spaces\*\*
+
+Next cd to your Task 1 directory (e.g., \$SCRATCH/ngs.week2/task1), copy
+the slurm template from Week1 to the directory and rename it.
+
+```{bash}
+cp /scratch/work/courses/BI7653/hw1.2023/slurm_template.sh .  # recall, the "." refers to the present working directory
+mv slurm_template.sh <name of your choosing> # It is best practice to retain the .sh file extension for shell scripts
+```
+
+Now execute an appropriate fastp commandline via a slurm job submission
+script as follows:
+
+1.  Modify the template script to request 4 Gb of memory and 4 hrs
+    runtime in the #SBATCH directives<br>
+2.  Modify the template script to load the most recent fastp module<br>
+3.  Add a fastp command to execute fastp on the pair of fastqs listed
+    above. Use the "simple usage" examples on the fastp Github page to
+    run fastp on paired-ends<br>
+4.  Define arguments `-i`, `-I`, `-o`, `-O` with appropriate values.<br>
+5.  Please add the following arguments to your fastp command line.<br>
+    Retain only reads 76 bp or longer after trimming as recommended for
+    BWA-MEM aligner: `--length_required 76`<br> Tolerate up to 50 Ns in
+    reads: `--n_base_limit 50`<br> Turn on paired-end adapter trimming:
+    `--detect_adapter_for_pe`<br>
+6.  Execute your script using `sbatch`<br>
+7.  Follow job status using:
+
+```{bash}
+squeue -u <net id>
+```
+
+**Q1.1 For your answer report the following [ 1 point ].**
+
+**Q1.1a.Paste the contents of your job script into your homework file.
+Please use an RMarkdown code block or equivalent (see Week 2 webinar
+when we will discuss RMarkdown) if possible.**
+
+```{bash}
+#!/bin/bash
+#
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=4:00:00
+#SBATCH --mem=4GB
+#SBATCH --job-name=slurm_template
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module purge
+echo script begin: $(date)
+# Load the most recent fastp module
+module load fastp
+
+fastp --detect_adapter_for_pe \
+      --length_required 76 \
+      --n_base_limit 50 \
+      -i /scratch/work/courses/BI7653/hw2.2023/ERR156634_1.filt.fastq.gz \
+      -I /scratch/work/courses/BI7653/hw2.2023/ERR156634_2.filt.fastq.gz \
+      -o /scratch/work/courses/BI7653/hw2.2023/ERR156634_1.filt.fastp.fastq.gz \
+      -O /scratch/work/courses/BI7653/hw2.2023/ERR156634_2.filt.fastp.fastq.gz
+
+echo script completed: $(date)
+```
+
+**Q1.1b Report your job id.**
+
+30213025
+
+\*\*Q1.1c Check the exit status of your job usig the `seff` command.
+What is the exit code and what does it mean?\* Efficiency not available
+for jobs in the PENDING state.
+
+**Q1.2 A common source of confusion is the distinction between relative
+and absolute file paths. [ 1 point ]** 
+
+**Q1.2a What is the difference?**
+An absolute path starts from the root directory of the file system and
+specifies the complete path to a file or directory, including all the
+parent directories, while a relative path starts from the current
+directory and specifies the path to a file or directory relative to the
+current directory.
+
+**Q1.2b Did you use absolute or relative paths in your fastp in the
+course directory? Did you use an absolute or relative path to write the
+processed fastq files?** 
+
+The file paths used in the fastp command are
+absolute paths, as they start from the root directory
+(/scratch/work/courses/BI7653/hw2.2023/). The paths used to write the
+processed fastq files are also absolute paths, since they start from the
+root directory (/scratch/work/courses/BI7653/hw2.2023/).
+
+During read processing, it is common that a tool such as fastp will
+filter a read from one fastq file (e.g., because it is shorter than the
+minimum length), but its mated read in the second fastq file will NOT
+survive the filter. **Preserving the number and order of short read
+records in paired-end fastq files is critical**. Therefore, fastp will
+discard BOTH reads if one read fails the read length threshold (or any
+other filters that may have been specified).
+
+Alternatively fastp has an option to write "orphaned" reads that pass
+filter (but whose mates failed filters) to additional output files
+should you wish to retain single-end reads for downstream analysis.
+
+Here we have adopted the default behavior and will only work with read
+pairs where both reads passed QC.
+
+**Q1.3 Confirm your job has completed and that you are working
+interactively at a Greene compute node. You may then answer the
+following questions using a combination of gunzip and the STDOUT of
+fastp. [ 1 point ].**<br>
+
+**Q1.3a What is the name of the STDOUT file for your job?**<br>
+
+**Q1.3b Review the STDOUT file from Q1.3a. What percentage of the bases
+were Phred quality of Q30 or above in each of the original and processed
+fastqs?**<br>
+
+For the original fastqs:
+
+Read1: Q30 bases: 1654818604(94.3776%)
+Read2: Q30 bases: 1604981035(91.5352%)
+For the processed fastqs:
+
+Read1: Q30 bases: 1628465308(94.7822%)
+Read2: Q30 bases: 1588178177(92.4373%)
+Therefore, the percentage of bases with a Phred quality score of Q30 or above is higher in the processed fastqs compared to the original fastqs for both Read1 and Read2.
+
+**Q1.3c Report the "Filtering result" section of the output and the
+duplication rate. Notice the different filters that are applied by
+fastp.**<br>
+
+Filtering result:
+reads passed filter: 34367822
+reads failed due to low quality: 541724
+reads failed due to too many N: 0
+reads failed due to too short: 158504
+reads with adapter trimmed: 201414
+bases trimmed due to adapters: 9134238
+
+The "Filtering result" section reports the number of reads that passed the filter, as well as the number of reads that failed due to low quality, too short, or with adapter trimming applied. Additionally, the number of bases trimmed due to adapters is also reported.
+
+The duplication rate is reported as 0.768038%, which indicates the percentage of reads that were duplicates. 
+
+**Q1.4. fastp produces an .html report fastp.html by default. Please
+download it and identify something interesting or unexpected to you and
+upload along with your homework document [ 1 point ].**
+
+#### Task 2: Process fastqs and generate fastqc reports
+
+In the previous task, you ran fastp on a pair of fastqs from a single
+sample. In this task, you will execute a script provided by your
+instructor to run both fastp and fastqc to process reads in parallel
+from a set of 21 samples from the 1000 Genomes Project.
+
+Processing samples in parallel requires management of large numbers of
+inputs and outputs (filenames, file locations, etc.) and can get
+complicated for large-scale projects where it is difficult to track
+files and confirm successful completion of data processing steps. Later
+in the course, you will learn about Workflow Management Systems (WMS)
+such as nextflow which will help streamline the process of managing
+large workflows.
+
+However, in many contexts, it is practical and efficient to run jobs in
+parallel without a WMS. BASH shell scripting is a time-honored approach
+used by many bioinformaticians to execute jobs. We will emphasize the
+use of job arrays to deploy these tasks on the HPC, although jobs run on
+single samples (as in Task 1) is common.
+
+Job arrays use `sbatch` to execute a single script on multiple samples
+in parallel. There are other approaches to executing a script on many
+samples (e.g., for loops), but job arrays are preferred for a variety of
+reasons.
+
+Your instructor has written a job array script for you that will execute
+fastp and fastqc on 21 samples. The fastqs are from 2 X 100 PE runs from
+the 1000 Genomes Project referenced above.
+
+Now create a directory for task2 (e.g., \$SCRATCH/ngs.week2/task2) and
+cd to it. Copy the array job script to your present working directory.
+
+```{bash}
+cd <task 2 directory>
+cp /scratch/work/courses/BI7653/hw2.2023/wk2_task2.sh .
+```
+
+Please update the script with a terminal text editor to include your
+email in the `#SBATCH --mail-user` argument. You can use nano, emacs,
+vim text editors available on Greene (see Week 1 assignment for
+assistance if necessary).
+
+Now review the script contents to understand the approach taken to
+process samples:
+
+```{bash}
+less wk2_task2.sh  # type q to exit when done
+```
+
+The script uses a table located at
+`/scratch/work/courses/BI7653/hw2.2023/week2_fastqs.txt` to identify
+samples and their fastq files. This table is tab-delimited with 3
+columns containing sample name, the name of the read 1 (forward) fastq
+file, and the name of the read 2 (reverse) fastq file. The fastq files
+are also located in the hw2.2023 directory.
+
+Next notice the `#SBATCH –array=1-21` argument. This directive instructs
+slurm to launch a job array with 21 parallel instances of the script
+each with their own environment and variable definitions. **The key to
+understanding job arrays is to recognize that invoking
+`#SBATCH --array <values>` creates an environmental variable called
+`SLURM_ARRAY_TASK_ID`. In each of the 21 parallel instances, this
+variable will take on a different value, in this case single number
+between 1 and 21.**
+
+The script provided by your instructor uses the value in
+SLURM_ARRAY_TASK_ID to parse the week2_fastqs.txt file. When
+`SLURM_ARRAY_TASK_ID` is 1, it will extract the first of data from the
+table with sample name, forward fastq and reverse fastq. When
+`SLURM_ARRAY_TASK_ID` is 2, it will extract the second row etc. Within
+each parallel instance, the row from the table will be parsed such that
+column 1, 2 and 3 are defined as shell variables "sample", "fq1", and
+"fq2". In summary, the array job will work completely independently on
+each sample and dynamically define variables sample, fq1, and fq2 in
+each parallel instance.
+
+The remainder of the script creates a sample directory, changes
+directories to that directory, executes fastp and fastqc and then writes
+the outputs in that directory.
+
+Before proceeding, please confirm that you are in your Task 2 directory
+and verify that directory is located on the `/scratch` file system (Do
+not write to your \$HOME!). This is important because the trimmed fastq
+file outputs are large and you will quickly exceed your quota in your
+`/home` directory.
+
+When you are ready, launch the script wk2_task2.sh as:
+
+```{bash}
+sbatch wk2_task2.sh
+```
+Submitted batch job 30291017
+
+Record the job id and monitor the status of your job:\`
+
+```{bash}
+squeue -u <net id>
+```
+
+You should see 21 entries with the jobid and an index number assigned to
+each "subjob" along with their current run status. This job should
+finish within 1.5 hrs or sooner for all samples (unless queue times are
+long).
+
+Please confirm that the job has completed before continuing.
+
+Q2.1. Each array index will have its own STDERR and STDOUT which by
+default are written to a single file with naming convention slurm-\<job
+id\>\_\<index\>.out. Please review the contents of the output for index
+1 and answer the following [ 1 point ].
+
+**Q2.1a Were any adapter sequences detected?**
+The program detected that no adapters were present in either of the reads.
+
+**Q2.1b How many reads were in the read 1 set before filtering? Read
+2?**
+58521629
+
+**Q2.1c How many reads survived filtering in Read 1 set? Read 2?**
+55124556
+55124556
+
+**Q2.1d What percentage of reads survived filtering in Read 1 set?**
+(55124556 / 58521629) * 100 = 94.175%
+
+**Q2.1e Copy the contents of your output for index 1 of your job array
+to your homework file**
+
+Processing array index: 1 sample: NA18757
+Detecting adapter sequence for read1...
+No adapter detected for read1
+
+Detecting adapter sequence for read2...
+No adapter detected for read2
+
+Read1 before filtering:
+total reads: 58521629
+total bases: 5910684529
+Q20 bases: 5700891751(96.4506%)
+Q30 bases: 5376153278(90.9565%)
+
+Read2 before filtering:
+total reads: 58521629
+total bases: 5910684529
+Q20 bases: 5587494577(94.5321%)
+Q30 bases: 5236863942(88.6%)
+
+Read1 after filtering:
+total reads: 55124556
+total bases: 5566101957
+Q20 bases: 5450378785(97.9209%)
+Q30 bases: 5169068074(92.8669%)
+
+Read2 aftering filtering:
+total reads: 55124556
+total bases: 5566101957
+Q20 bases: 5410523196(97.2049%)
+Q30 bases: 5092424228(91.49%)
+
+Filtering result:
+reads passed filter: 110249112
+reads failed due to low quality: 6081064
+reads failed due to too many N: 0
+reads failed due to too short: 713082
+reads with adapter trimmed: 949358
+bases trimmed due to adapters: 43433322
+
+Duplication rate: 1.01555%
+
+Insert size peak (evaluated by paired-end reads): 171
+
+JSON report: NA18757.fastp.json
+HTML report: NA18757.fastp.html
+
+**One disadvantage of job arrays versus workflow management systems is
+that confirming that each command executed successfully can be
+challenging. Your instructor used `echo` to print the word \_ESTATUS\_
+and the BASH special variable \$? (which reports the exit status of the
+most recently executed command) after the fastp and fastqc commands to
+confirm a zero exit status.**
+
+You can quickly check that all processes completed with a zero exit
+status by navigating to your Task 2 directory (where the slurm-\_.out
+files are located) and enter:
+
+```{bash}
+grep _ESTATUS_ slurm*out # note: the * is a wild card and matches 0 or more characters
+```
+
+**Q2.2 Did all commands have an exit status of zero? Please copy the
+result of the `grep` command into your homework document [ 1 point ].**
+slurm-30291216_10.out:_ESTATUS_ [ fastp for HG00149 ]: 0
+slurm-30291216_10.out:_ESTATUS_ [ fastqc for HG00149 ]: 0
+slurm-30291216_11.out:_ESTATUS_ [ fastp for HG00260 ]: 0
+slurm-30291216_11.out:_ESTATUS_ [ fastqc for HG00260 ]: 0
+slurm-30291216_12.out:_ESTATUS_ [ fastp for NA18907 ]: 0
+slurm-30291216_12.out:_ESTATUS_ [ fastqc for NA18907 ]: 0
+slurm-30291216_13.out:_ESTATUS_ [ fastp for NA19137 ]: 0
+slurm-30291216_13.out:_ESTATUS_ [ fastqc for NA19137 ]: 0
+slurm-30291216_14.out:_ESTATUS_ [ fastp for NA19093 ]: 0
+slurm-30291216_14.out:_ESTATUS_ [ fastqc for NA19093 ]: 0
+slurm-30291216_15.out:_ESTATUS_ [ fastp for NA19256 ]: 0
+slurm-30291216_15.out:_ESTATUS_ [ fastqc for NA19256 ]: 0
+slurm-30291216_16.out:_ESTATUS_ [ fastp for NA19098 ]: 0
+slurm-30291216_16.out:_ESTATUS_ [ fastqc for NA19098 ]: 0
+slurm-30291216_17.out:_ESTATUS_ [ fastp for NA18870 ]: 0
+slurm-30291216_17.out:_ESTATUS_ [ fastqc for NA18870 ]: 0
+slurm-30291216_18.out:_ESTATUS_ [ fastp for NA18909 ]: 0
+slurm-30291216_18.out:_ESTATUS_ [ fastqc for NA18909 ]: 0
+slurm-30291216_19.out:_ESTATUS_ [ fastp for NA19138 ]: 0
+slurm-30291216_19.out:_ESTATUS_ [ fastqc for NA19138 ]: 0
+slurm-30291216_1.out:_ESTATUS_ [ fastp for NA18757 ]: 0
+slurm-30291216_1.out:_ESTATUS_ [ fastqc for NA18757 ]: 0
+slurm-30291216_20.out:_ESTATUS_ [ fastp for HG00151 ]: 0
+slurm-30291216_20.out:_ESTATUS_ [ fastqc for HG00151 ]: 0
+slurm-30291216_21.out:_ESTATUS_ [ fastp for HG00106 ]: 0
+slurm-30291216_21.out:_ESTATUS_ [ fastqc for HG00106 ]: 0
+slurm-30291216_2.out:_ESTATUS_ [ fastp for NA18627 ]: 0
+slurm-30291216_2.out:_ESTATUS_ [ fastqc for NA18627 ]: 0
+slurm-30291216_3.out:_ESTATUS_ [ fastp for NA18591 ]: 0
+slurm-30291216_3.out:_ESTATUS_ [ fastqc for NA18591 ]: 0
+slurm-30291216_4.out:_ESTATUS_ [ fastp for NA18566 ]: 0
+slurm-30291216_4.out:_ESTATUS_ [ fastqc for NA18566 ]: 0
+slurm-30291216_5.out:_ESTATUS_ [ fastp for NA18644 ]: 0
+slurm-30291216_5.out:_ESTATUS_ [ fastqc for NA18644 ]: 0
+slurm-30291216_6.out:_ESTATUS_ [ fastp for NA18545 ]: 0
+slurm-30291216_6.out:_ESTATUS_ [ fastqc for NA18545 ]: 0
+slurm-30291216_7.out:_ESTATUS_ [ fastp for HG00113 ]: 0
+slurm-30291216_7.out:_ESTATUS_ [ fastqc for HG00113 ]: 0
+slurm-30291216_8.out:_ESTATUS_ [ fastp for HG00243 ]: 0
+slurm-30291216_8.out:_ESTATUS_ [ fastqc for HG00243 ]: 0
+slurm-30291216_9.out:_ESTATUS_ [ fastp for HG00132 ]: 0
+slurm-30291216_9.out:_ESTATUS_ [ fastqc for HG00132 ]: 0
+
+#### Task 3: Generate a multi-sample QC report with MultiQC
+
+Quality control analysis of processed fastqs is an important step in
+every NGS project. Here we will use MultiQC to parse the outputs from
+FastQC outputs from Task 2 and generate a report for visual inspection
+of library quality.
+
+The main page for MultiQC: `https://multiqc.info/`
+
+The documentation is here: `https://multiqc.info/docs/`
+
+MultiQC needs to find the outputs of FastQC (with file extension
+fastqc.zip) from Task 2 in order to parse them. Please read the section
+of the MultiQC documentation on Running MultiQC paying special attention
+to "Choosing Where to Scan".
+
+Lets get the absolute paths (i.e., from the root "/" directory) to all
+fastqc.zip files and write them to a file.
+
+```{bash}
+cd <your Task 2 directory>
+find $PWD -name \*fastqc.zip > fastqc_files.txt # adding the $PWD to the find command makes sure the file paths we extract are from root
+less fastqc_files.txt # type q to exit
+```
+
+The fastqc_files.txt file should have paths to 42 files representing
+\*fastqc.zip reports for forward and reverse reads for the 21 samples.
+We will use this to run MultiQC to generate a single consolidated report
+for all fastqc outputs.
+
+Create a directory for Task 3 and cd to it.
+
+Load the most recent MultiQC software module on Greene. Then, write a
+command line that will execute MultiQC. You can see an example command
+that uses a text file, like fastqc_files.txt created above, as input to
+MultiQC at <https://multiqc.info/docs/> under the section "Choosing
+Where to Scan" and use the option to "supply a file containing a list of
+file paths":
+
+Confirm you are at a compute node (run `srun` if necessary, see Week 1)
+and execute the command from the command line. Alternatively, you could
+create a slurm job script and use `sbatch` to execute.
+
+**Q3.1 Report your multiqc command [ 1 point ].**
+multiqc . -o multiqc_report/
+
+**Q3.2. Download the MultiQC output (multiqc_report.html by default) to
+your personal computer, open the report in your browser, and answer the
+following questions.**
+
+You can review the following short tutorial on working with MultiQC
+reports `https://www.youtube.com/watch?v=qPbIlO_KWN0`. You can hover
+your arrow over features in the interactive .html report to determine
+information like the fastq file that is represented by the feature.
+
+**Q3.2a Which fastq file has the greatest decline in base quality with
+increasing sequencing cycle ("the dephasing problem")? [ 1 point ]**
+ERR251551.1.filt.fp
+
+**Q3.2b Two samples (four fastqs) appear to have unusually high GC
+content and unusually high duplication levels? Which samples are they? [
+1 point ]**
+SRR766045.1
+SSR70273.1
+
+**Q3.2c Was there any residual adapter contamination in any fastq file
+after processing with reads with fastp [ 1 point ]?**
+No samples found with any adapter contamination > 0.1%
+
+
+#### You are finished, please review the Completing your assignment section above before submitting your report.
