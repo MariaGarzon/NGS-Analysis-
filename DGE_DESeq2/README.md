@@ -39,3 +39,10 @@ Extract results of differential expression analysis.
 Report log2 fold-changes for candidate genes.
 
 Report normalized counts for candidate genes.
+
+### Task 4: The Multiple Testing Problem
+Discuss the multiple testing problem.
+
+Interpret adjusted p-values (FDR) for candidate genes.
+
+Determine statistically and biologically significant genes.
