@@ -1,0 +1,144 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+  theme: lumen
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+Pseudo-alignment is a recent development in RNA-seq analysis that allows quantification of transcript abundances without the need to align reads and create SAM/BAM alignment files. 
+
+Salmon uses kmers to identiy which trascript a read originates from without determining the exact location and reurns Transcripts Per Million (TPMs) which are coverted to gene level counts for DGE
+
+# About the data
+palm fruit RNA-seq dataset introduced in Weeks 7 and 8. You will test for differential gene expression between types (“varieties”) of date palm with high fruit sucrose content (n=4) versus those with trace (very low) amounts of sucrose (n=4). The goal of the original research was to determine if a group of linked invertase genes identified by Genome Wide Association Study (GWAS) showed DGE between varieties with the two sugar phenotypes and might therefore cause the sugar composition phenotype.
+
+The RNA-seq data in this experiment were generated on a NextSeq sequencer, processed to exclude reads that failed Illumina’s quality control filter, and then adapters removed with Trimmomatic.
+
+# Background 
+Differential Transcript Usage (DTU): DTU occurs when different treatments or conditions result in varying mixtures of alternative splice variants for a gene. This can affect exon union count-based approaches because different splice variants have different lengths, and this length variation is not considered in the analysis.
+
+Solution with Salmon + tximport + DESeq2: To address the challenges posed by DTU and avoid inflated false positive rates, statisticians recommend conducting gene-level analysis by first calculating TPMs for each alternative splice variant using tools like Salmon. These TPMs are then converted to count data at the gene level, making the analysis more robust to DTU.
+
+# Use Salmon to estimate transcript abundances (TPMs), convert TPMs to gene-level counts, and conduct differential expression analysis with DESeq2.
+
+Salmon requires reference transcripts. That is, the reference to which reads will be “pseudo-aligned” is a transcriptome fasta. This file contains transcript sequences specified in a genome annotation (gff or GTF file).
+The script will create a sample directory for each sample to which all outputs will be written.
+
+```{bash}
+#!/bin/bash
+#
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=24:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=salmon
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=mpg8596@nyu.edu
+#SBATCH --array=1-8
+
+module purge
+
+# Add appropriate module load command here: 
+echo The array index is: ${SLURM_ARRAY_TASK_ID}
+
+# note: fq1 and fq2 variables below contain file names, not full paths to the fastq files
+# note: fqdir is a variable with the paths to the directory with the fastqs
+table=/scratch/work/courses/BI7653/hw8.2023/fastqs.txt
+line="$(head -n ${SLURM_ARRAY_TASK_ID} "${table}" | tail -n 1)"
+sample="$(printf "%s" "${line}" | cut -f1)"
+fq1="$(printf "%s" "${line}" | cut -f2)"
+fq2="$(printf "%s" "${line}" | cut -f3)"
+
+fqdir=/scratch/work/courses/BI7653/hw8.2023/fastqs
+salmon_index_dir=/scratch/work/courses/BI7653/hw10.2023/datepalm_transcripts/Pdac_Barhee_chr_unan_180126.all.maker.transcripts_HC_shuffled_normalized_index
+
+mkdir "$sample"
+cd "$sample"
+
+# note: to get full paths to the fastq files, we must use $fqdir/$fq1 or $fqdir/$fq2
+salmon quant -i ${salmon_index_dir} -l A -1 $fqdir/$fq1 -2 $fqdir/$fq2 --validateMappings --gcBias --threads ${SLURM_CPUS_PER_TASK} -o $sample.transcripts_quant
+
+echo _ESTATUS_ [ salmon quant $sample ]: $?
+echo _END_ [ salmon.slurm ]: $(date)
+```
+
+
+# The output file “quant.sf” is a tab-delimited file that contains the following columns:
+Name: the name of the transcript or gene
+Length: the length of the transcript or gene in base pairs (bp)
+EffectiveLength: the effective length of the transcript or gene, which is a length correction for the sequencing bias towards the 3’ end of the transcript. It is calculated as Length - Average fragment length + 1
+TPM (Transcripts Per Million): the expression value of the transcript or gene in transcripts per million, which is normalized for library size and transcript length.
+NumReads: the estimated number of reads that originate from the transcript or gene. It is calculated as TPM * (Library size in millions / 1e6)
+The file contains information for each transcript or gene in the reference transcriptome or genome that was used for mapping.
+
+An unstranded RNA-seq library does not differentiate between RNA molecules from the sense or anti-sense strands of the original DNA. This means that the RNA-seq reads may come from either strand and the sequencing process cannot determine which. On the other hand, a stranded RNA-seq library is prepared in such a way that it preserves the information about the original strand that the RNA molecule was transcribed from. With strand-specific RNA-seq, it is possible to differentiate sense and antisense transcripts and to determine the relative expression levels of both strands of the same genomic locus. This can help in downstream analyses, such as differential expression analysis, by enabling the detection of changes in expression on a per-strand basis.
+
+
+Stranded libraries are typically preferred for performing differential gene expression (DGE) analysis because they provide more accurate quantification of transcript abundance for genes that are transcribed from opposite strands. In an unstranded library, reads from both strands of a gene are mixed together, making it difficult to distinguish between transcripts from the two strands. This can lead to over- or underestimation of gene expression levels and inaccurate identification of differentially expressed genes. Stranded libraries, on the other hand, allow for accurate measurement of expression levels from both strands, which is important for analyzing antisense transcripts, overlapping genes, and other complex gene structures. Additionally, stranded libraries can help to reduce technical noise and improve reproducibility of gene expression measurements.
+
+DESeq2 converts TPMs to gene counts because it uses a negative binomial model to estimate gene expression, which requires integer counts as input. While TPMs provide a measure of relative expression, they are not integer counts and cannot be used directly in a negative binomial model. Therefore, DESeq2 converts TPMs to gene counts by multiplying the TPM values by a scaling factor and then rounding to the nearest integer. This results in a set of counts that can be used as input to the negative binomial model in DESeq2.
+
+# create DESeqDataSet object
+library("DESeq2")
+ddsTxi <- DESeqDataSetFromTximport(txi,
+                                   colData = samples,
+                                   design = ~ condition)
+class(ddsTxi)
+
+keep <- rowSums(counts(ddsTxi)) >= 10
+dds <- ddsTxi[keep,]
+
+ddsTxi <- DESeq(ddsTxi)
+class(ddsTxi)
+
+# Results from the DESeq2 analysis can be extracted from the DESeqDataSet object using the “results” function.
+
+res <- results(ddsTxi, contrast = c('condition','lowSucrose','highSucrose') )
+class(res) 
+
+# Now, sort the data ascending on p-value. Note that DESeqResults objects are data.frame-like and can be sorted similar to data.frame objects.
+
+resOrdered <- res[order(res$pvalue),] 
+head(resOrdered,10) # View the 10 most significant genes
+
+res.shrunk <- lfcShrink(ddsTxi, coef=2, type='apeglm')
+res.shrunkOrdered <- res.shrunk[order(res.shrunk$pvalue),]
+
+resOrdered
+res.shrunkOrdered
+
+# MA plot
+plotMA(res)
+plotMA(res.shrunk)
+
+# top10genes <- head(res.shrunkOrdered, 10)
+
+Pdac_HC_chr14G0022900 and Pdac_HC_chr14G0023100 have a very low p-value and large absolute value of log2 fold-change. Therefore, they are likely to be statistically significantly differentially expressed between lowSucrose and highSucrose conditions. As for Pdac_HC_chr14G0028200 (alkaline/neutral invertase enzyme), we cannot make a determination based on the table since it is not present.
+
+# Estimate dispersions using parametric method
+ddsTxi_parametric <- DESeq(ddsTxi)
+plotDispEsts(ddsTxi_parametric, main = "Parametric Method")
+
+# Estimate dispersions using local method
+ddsTxi_local <- estimateDispersions(ddsTxi, fitType="local")
+plotDispEsts(ddsTxi_local, main = "Local Method")
+
+# Estimate dispersions using mean method
+ddsTxi_mean <- estimateDispersions(ddsTxi, fitType="mean")
+plotDispEsts(ddsTxi_mean, main = "Mean Method")
+
+
+In general, a good dispersion estimate method should result in a downward sloping trendline, indicating that the variance of the gene counts decreases as the mean expression level increases. This can be seen in the local and parametric method plots that have almost the exact same distributions, with a downward sloping trendline as the mean value increases and the variance of the gene counts decreases. In contrast, the mean method plot has a flat line indicated dispersion estimates are not accurate and that the variance may be dependent on the mean expression level.
+
+The parametric method assumes a specific relationship between the mean and variance, and can be a good option when this relationship holds true which is evident in the plot. The local method uses a non-parametric method to estimate the trendline, which may be more flexible and can better capture non-linear relationships. The mean method assumes that the dispersion estimates are constant across all genes and can be useful when there is no apparent relationship between the mean and variance which is not the case here.
+
+# Here are three reasons why the Salmon + tximport + DESeq2 workflow may be preferred over the STAR + htseq-count + DESeq2 workflow:
+Transcript-level quantification: The Salmon + tximport + DESeq2 workflow quantifies expression at the transcript level, while the STAR + htseq-count + DESeq2 workflow quantifies expression at the gene level. This allows for more precise and accurate measurement of expression levels, particularly for genes with multiple transcripts.
+Compatibility with multiple sequencing protocols: Salmon is compatible with a variety of sequencing protocols, including paired-end and single-end reads, and can handle stranded and unstranded data. This makes it a versatile tool that can be applied to a wide range of RNA-seq datasets.
+Speed and efficiency: Salmon is generally faster and more computationally efficient than STAR and htseq-count. This can be particularly advantageous when working with large datasets or limited computing resources, allowing for quicker analysis and reduced processing time.

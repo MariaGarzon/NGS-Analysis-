@@ -13,6 +13,8 @@ knitr::opts_chunk$set(eval = FALSE)
 
 ## Create a DESeqDataSet object
 
+### The sample table includes, the htseq-count file names, the sample names, and which treatment (e.g., treatment or control) each sample belongs. In our case the conditions are the different types of fruit based on their sugar composition.`
+
 ```{r}
 sampleFiles <- paste(c('PDAC253','PDAC282','PDAC286','PDAC316','PDAC266','PDAC273','PDAC306','PDAC318'),'.htseq_count.txt',sep="")
 sampleCondition <- c(rep('highSucrose',4),rep('lowSucrose',4))
@@ -40,18 +42,16 @@ $$Y = B_1X + B_o$$
 
 where $B_1$ is the coefficient (=fold-change) for the treatment of fruit sugar type (high sucrose or low sucrose).
 
-### Q1.1 Execute the following
+In the DESeq2 framework, we are testing the null hypothesis that samples in the treatment set versus control set have a gene expression fold-change of zero.
 
 ```{r}
 class(dds) # Determine the type of object
 dds
 ```
 
-### Q1.1. Report the output indicating what type of object the dds variable is, how many genes, and how many samples are stored in the object? [ 1 point ]
-
 #### The output indicates that the dds variable is of class "DESeqDataSet" and has 28595 rows (genes) and 8 columns (samples). 
 
-## Task 2: Pre-filter low count genes, normalize counts and run DESeq
+## Pre-filter low count genes, normalize counts and run DESeq
 
 ```{r}
 keep <- rowSums(counts(dds)) >= 10
@@ -69,8 +69,6 @@ normalizedcounts.matrix <- counts(dds,normalized=T)
 class(rawcounts.matrix)
 ```
 
-### Q2.1 Enter `dds` at the console to summarize your object. Report the output for your answer and how many genes were retained after removing the low count genes [ 1 point ].
-
 ### class: DESeqDataSet
 ### dim: 20029 8
 ### metadata(1): version
@@ -83,7 +81,7 @@ class(rawcounts.matrix)
 ### There are 20,029 genes retained after filtering
 
 
-## Task 3: Analyze DGE data
+## Analyze DGE data
 
 ```{r}
 rld <- rlog(dds)
@@ -99,24 +97,15 @@ plotPCA(rld, intgroup = "condition", returnData = TRUE) %>%
   geom_point()
 ```
 
-### Q3.1 Include the hierarchical clustering result, your plotPCA command, and the PCA plot for you answer [ 1 point ].
-
-### Q3.2 Now answer the following [ 2 points ].    
-
-### Q3.2a Do the samples cluster by sugar composition phenotype in the hierarchical clustering? Explain.  
+### Do the samples cluster by sugar composition phenotype in the hierarchical clustering?  
 
 #### Yes they do, in the dendrogram produced the samples that are closer to each other in the tree are more similar to each other in sugar composition.
 
-### Q3.2b Does the PCA separate samples by sugar composition? If so, on which axis?  
+### Does the PCA separate samples by sugar composition? If so, on which axis?  
 
 #### (e) Yes. The PCA mostly separates points on PC2 except one outlier.
 
-### Q3.2c In many contexts, the treatment will induce large effects on the transcriptome that often cause biological replicates from the same treatment to cluster together. Another factor that could cause samples to cluster together is batch effects. Which of the following are potential sources of batch effects in RNA-seq analysis?  
-
-#### (f) all of the above
-
-### Q3.2d Without any additional information about how the experiment was conducted, do you see any evidence of a batch effect? Why or why not?  
-
+###  Without any additional information about how the experiment was conducted, do you see any evidence of a batch effect? Why or why not?  
 #### If biological replicates from the same treatment are not clustering together and are instead dispersed across the PCA plot, this could suggest the presence of a batch effect. Similarly, if samples from different treatments are clustering together, this could also indicate the presence of a batch effect. Therefore, it's possible that a batch effect could be causing a high sugar content sample to cluster with the low sugar samples. If the batches were not properly randomized, then samples from a particular batch could end up clustered together regardless of their sugar content
 
 ```{r}
@@ -173,7 +162,7 @@ Pdac_HC_chr14G0028200: 2^(0.429695) = 1.30
 Therefore, Pdac_HC_chr14G0022900 has the highest fold change (802.12) in expression between low and high sucrose samples.
 ```
 
-### Q3.4b Sometimes its useful to report the normalized counts for each gene as a figure or table. For your answer, report the normalized counts for each candidate gene as a table [ 1 point ].  
+### Report the normalized counts for each candidate gene as a table 
 
 ```{r}
 plotCounts(dds, gene='Pdac_HC_chr14G0028200', intgroup="condition", 
@@ -211,11 +200,9 @@ plotMA(res.shrunk)
 
 #### Reporting the shrunken estimates is appropriate because it provides more accurate estimates of differential expression, particularly for genes with low counts or high variability. Shrinkage improves the precision of estimates and reduces false positives, which can lead to more biologically meaningful results.
 
-## Task 4. The multiple testing  problem
+## The multiple testing  problem
 
-### Q4.1 Subset the table with "shrunken" log2 fold-change estimates to include only the candidate genes and answer the following [ 1 point ]:  
-
-### Q4.1a. Report your results from the lfcShrink output table for the candidate genes.  
+### Results from the lfcShrink output table for the candidate genes 
 
 ```{r}
 res.shrunkOrdered[ row.names(resOrdered) %in% c('Pdac_HC_chr14G0022900','Pdac_HC_chr14G0023100','Pdac_HC_chr14G0028200'), ]
@@ -230,10 +217,7 @@ Pdac_HC_chr14G0022900  2839.320       9.683692  1.234134 1.25031e-16 4.28130e-13
 Pdac_HC_chr14G0028200   590.073       0.311279  0.232408 8.52678e-02 2.95845e-01
 ```
 
-### Q4.1b. Statisticians make the distinction between statistically signficant and biologically significant. Using a criterion that a statistically differentially expressed gene **must also show at least a two-fold change in expression (on linear scale) to be biologically meaningful**, which genes do you consider to be differentially expressed? Please specify the gene(s), the FDR threshold you applied.
-
 #### Based on the shrunken log2 fold-change estimates table, the genes Pdac_HC_chr14G0022900 and Pdac_HC_chr14G0023100 can be considered differentially expressed as they show statistically significant differences (adjusted p-value < 0.05) and at least a two-fold change in expression (on linear scale) between the lowSucrose and highSucrose conditions. The gene Pdac_HC_chr14G0028200 does not meet the criteria for biological significance as it has an adjusted p-value > 0.05 and a log2 fold-change estimate below two-fold. The FDR threshold applied was 0.05.
 
 
-### Q4.1c Which of the candidate genes do you think could be responsible for the sugar composition trait on the chromosome 14 sugar QTL?  
 #### Based on the shrunken log2 fold-change estimates and adjusted p-values, both Pdac_HC_chr14G0022900 and Pdac_HC_chr14G0023100 meet the criteria for differential expression and have adjusted p-values less than 0.01. Additionally, both genes show more than a 2-fold change in expression on the linear scale between the high and low sucrose conditions. Therefore, it is possible that either or both of these genes could be responsible for the sugar composition trait on the chromosome 14 sugar QTL. Further experimentation and analysis would be needed to confirm this hypothesis.
