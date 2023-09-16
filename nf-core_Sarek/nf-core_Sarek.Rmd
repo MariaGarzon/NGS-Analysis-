@@ -1,0 +1,138 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+Deploy the nf-core Sarek pipeline to execute a germline variant-calling workflow 
+nf-core is a project consisting of Nextflow pipelines
+Sarek is designed to handle a range of experimental designs including germline variant-calling (as performed in Weeks 2-4) and somatic SNP calling using tumor-normal pairs.
+Data: 30X paired-end (Illumina) sequence data from a single individual (NA12878) from the 1000 Genomes Project.
+
+#### Call SNPs using GATK HaplotypeCaller using nf-core Sarek pipeline 
+
+```{bash}
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=20
+#SBATCH --time=36:00:00
+#SBATCH --mem=32GB
+#SBATCH --job-name=germline
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=<your email>
+
+# load module here
+module load nextflow
+
+# from inside software directory, outdir by defaults will be results or can specify --outdir
+nextflow run nf-core-sarek-3.1.2/workflow -profile test_full_germline,singularity \
+--tools haplotypecaller \
+--outdir results \
+-name <job name> \
+-with-timeline \
+-with-trace \
+-with-report \
+-with-dag
+```
+
+Output of the `nextflow log` command: 
+(nf-core) [mpg8596@log-1 task3]$ nextflow log
+TIMESTAMP          	DURATION     	RUN NAME         	STATUS	REVISION ID	SESSION ID                          	COMMAND                                                             
+2023-02-28 17:59:33	11h 59m 24s  	germline_analysis	ERR   	c87f4eb694 	ce9ccd73-263d-45f9-9cb1-b19c50b272b5	nextflow run 'https://github.com/nf-core/sarek.git' -r c87f4eb694 -profile test_full_germline,singularity --tools haplotypecaller --outdir results -name germline_analysis -with-timeline -with-trace -with-report -with-dag
+2023-03-02 08:51:18	1d 5h 36m 30s	germln_analysis  	OK    	c87f4eb694 	4ae66116-8bb3-4b74-a6b5-f296b1f653b9	nextflow run 'https://github.com/nf-core/sarek.git' -r c87f4eb694 -profile test_full_germline,singularity --tools haplotypecaller --outdir results -name germln_analysis -with-timeline -with-trace -with-report -with-dag
+
+The output from the second command provides the directory where the intermediate outputs for each  task is written. Note that the pipeline produced a directory called `work` which, in turn, contains a directories with two letter codes and a subdirectory named using a "hash code" (a unique name based on calculating the hash of a combination of complete file name path, timestamp and file size).  
+
+**execute a command that will return report a table with columns "hash,name,exit, and current status"**
+
+(nf-core) [mpg8596@log-1 task3]$ nextflow log germln_analysis -f hash,name,exit,status
+4a/1d0f5a	NFCORE_SAREK:SAREK:PREPARE_INTERVALS:CREATE_INTERVALS_BED (wgs_calling_regions_noseconds.hg38.bed)	0	COMPLETED
+29/e3f8ea	NFCORE_SAREK:SAREK:PREPARE_INTERVALS:TABIX_BGZIPTABIX_INTERVAL_SPLIT (chr1_223608936-228558364)	0	COMPLETED
+4e/6f1f78	NFCORE_SAREK:SAREK:PREPARE_INTERVALS:TABIX_BGZIPTABIX_INTERVAL_SPLIT (chr1_122026460-124977944)	0	COMPLETED
+a1/02ff37	NFCORE_SAREK:SAREK:PREPARE_INTERVALS:TABIX_BGZIPTABIX_INTERVAL_SPLIT (chr5_139453660-155760324)	0	COMPLETED
+f8/52c42f	NFCORE_SAREK:SAREK:PREPARE_INTERVALS:TABIX_BGZIPTABIX_INTERVAL_SPLIT (chr4_190173122-190204555)	0	COMPLETED
+
+**use `tail` command to review the last lines of your slurm-<jobid>.out file for the Sarek pipeline job run.**
+
+(nf-core) [mpg8596@log-1 task3]$ tail slurm-30690858.out
+[86/3b44b5] process > NFCORE_SAREK:SAREK:VCF_QC_B... [100%] 1 of 1 ✔
+[c3/b7627a] process > NFCORE_SAREK:SAREK:CUSTOM_D... [100%] 1 of 1 ✔
+[d4/2bac13] process > NFCORE_SAREK:SAREK:MULTIQC     [100%] 1 of 1 ✔
+-[nf-core/sarek] Pipeline completed successfully-
+Completed at: 03-Mar-2023 14:27:48
+Duration    : 1d 5h 36m 30s
+CPU hours   : 242.1
+Succeeded   : 158
+
+It appears that the Sarek pipeline job run was completed successfully. The last lines of the slurm-30690858.out file confirm this, as they show the completion time and duration of the pipeline, as well as the number of successfully completed processes (158).
+
+The lines from the execution status of various steps of the Sarek pipeline job, indicating the step name, input file or parameter (if applicable), exit code, and status of completion. The status "COMPLETED" indicates that the step completed successfully with exit code 0. The lines indicate that the pipeline finished executing without any errors. The last step, "MULTIQC", produced a summary report of the quality metrics of the input data processed by the pipeline.
+
+The caching of intermediate results (in the `work` directory) allows Nextflow pipelines to be restarted at the problematic point should any step fail due to some HPC issue.
+
+If your job had not completed successfully, what command line option would you add to resume the job? 
+If the job had not completed successfully and you want to resume it, you can add the --resume command line option to the nextflow run command. This will allow Nextflow to look for previously cached intermediate results and resume the pipeline from the last successfully completed step.
+
+nextflow run my_pipeline.nf --resume
+
+
+#### Review output
+
+Percent mapping rate to a reference is an indicator of library quality and/or the libraries divergence from the reference genome. 
+How many reads were mapped in the file NA12878.recal.cram?  661.4
+How many reads were unmapped?   0
+What is the reported percentage of mapped reads (the "read mapping rate")?100%
+
+Which of the following best describes the uncalibrated ("reported") base qualities compared to the calibrated/adjusted ("empirical") base qualities.  
+The reported quality scores are either equal to or lower than empirical quality scores.
+
+What does your answer indicate about the  error rate in base-calling in the raw (reported) read data.
+The reported base-calling error rates are under-estimated in at least some quality score classes
+
+Coverage depth captures the average number of shorts reads aligned to each position on each chromosome/contig in the reference genome (or can also be expressed as a single genome-wide value). Using the coverage depth information Mosdepth output section "Average coverage per contig", do you think individual NA12878 is a male or female? 
+
+Typically, males have one X chromosome and one Y chromosome, while females have two X chromosomes. Thus, we expect males to have half the coverage depth on the X chromosome compared to the autosomes and females to have the same coverage depth as the autosomes.
+
+We can see that the average coverage depth for the X chromosome is 31.9 indicating that the individual is likely female.If the individual was male, we would expect the average coverage depth for the X chromosome to be approximately half of the autosomal coverage depth. Additionally, the average coverage depth for the Y chromosome is 0.5, indicating that the individual is likely not male since males typically have a higher average coverage depth on the Y chromosome due to the presence of two copies of the chromosome.
+
+The `nextflow log` command described above provided some insight into the processes that were executed. 
+
+Here is a brief overview of each step:
+
+NFCORE_SAREK:SAREK:PREPARE_INTERVALS:CREATE_INTERVALS_BED: Generates a BED file containing genomic intervals to target for sequencing, based on a specified interval list.
+NFCORE_SAREK:SAREK:PREPARE_INTERVALS:TABIX_BGZIPTABIX_INTERVAL_SPLIT: Splits the specified genomic interval into smaller regions for parallel processing, using tabix and bgzip.
+NFCORE_SAREK:SAREK:PREPARE_GENOME:TABIX_DBSNP: Indexes a VCF file containing known variants (from dbSNP) using tabix.
+NFCORE_SAREK:SAREK:FASTQC: Performs quality control checks on the raw sequencing reads, using FastQC.
+NFCORE_SAREK:SAREK:FASTP: Performs adapter trimming and quality filtering on the raw sequencing reads, using Fastp.
+NFCORE_SAREK:SAREK:FASTQ_ALIGN_BWAMEM_MEM2_DRAGMAP:BWAMEM1_MEM: Aligns the processed reads to the reference genome, using the BWA-MEM algorithm.
+NFCORE_SAREK:SAREK:BAM_MARKDUPLICATES:GATK4_MARKDUPLICATES: Marks duplicate reads in the aligned BAM file, using GATK4 MarkDuplicates.
+NFCORE_SAREK:SAREK:BAM_BASERECALIBRATOR:GATK4_BASERECALIBRATOR: Recalibrates base quality scores in the BAM file, using GATK4 BaseRecalibrator.
+NFCORE_SAREK:SAREK:BAM_APPLYBQSR:GATK4_APPLYBQSR: Applies the base quality score recalibration to the BAM file, using GATK4 ApplyBQSR.
+NFCORE_SAREK:SAREK:BAM_APPLYBQSR:CRAM_MERGE_INDEX_SAMTOOLS:MERGE_CRAM: Merges the processed BAM files into a single CRAM file, using Samtools.
+NFCORE_SAREK:SAREK:BAM_APPLYBQSR:CRAM_MERGE_INDEX_SAMTOOLS:INDEX_CRAM: Generates an index file for the merged CRAM file, using Samtools.
+NFCORE_SAREK:SAREK:CRAM_QC_RECAL:MOSDEPTH: Calculates the coverage depth of the merged CRAM file, using Mosdepth.
+NFCORE_SAREK:SAREK:CRAM_QC_RECAL:SAMTOOLS_STATS: Generates summary statistics for the merged CRAM file, using Samtools.
+NFCORE_SAREK:SAREK:BAM_VARIANT_CALLING_GERMLINE_ALL:BAM_VARIANT_CALLING_HAPLOTYPECALLER:GATK4_HAPLOTYPECALLER: Calls variants in the processed BAM file, using GATK4 HaplotypeCaller.
+NFCORE_SAREK:SAREK:BAM_VARIANT_CALLING_GERMLINE_ALL:BAM_VARIANT_CALLING_HAPLOTYPECALLER:VCF_VARIANT_FILTERING_GATK:CNNSCOREVARIANTS: Filters variants based on their CNN score, using GATK4 VariantFiltration.
+NFCORE_SAREK:SAREK:BAM_VARIANT_CALLING_GERMLINE_ALL:BAM_VARIANT_CALLING_HAPLOTYPECALLER:VCF_VARIANT_FILTERING_GATK:FILTERVARIANTTRANCHES: Filters
+
+The primary output of interest is the final VCF found here, which has both SNPs and short indels. `results/variant_calling/haplotypecaller/NA12878/NA12878.haplotypecaller.filtered.vcf.gz`. 
+
+```{bash}
+gunzip -c NA12878.haplotypecaller.filtered.vcf.gz | less # then jump between screens using "d" key until you start seeing variants (lines that dont begin with # or ##)
+```
+
+Sarek runs vcftools software to generate a summary of the filters applied to the variant call set. The output file `reports/vcftools/haplotypecaller/NA12878/NA12878.haplotypecaller.filtered.FILTER.summary` provides counts of the numbers of variants that passed or failed the filters incorporated into `NA12878.haplotypecaller.filtered.vcf.gz`.  
+
+Report the counts of variants that passed filters, the names of the filters, and the number of variants that failed each filter: 
+
+Variants that passed filters: 4877899
+Filters and the number of variants that failed each filter:
+CNN_1D_INDEL_Tranche_99.40_100.00: 13406
+CNN_1D_SNP_Tranche_99.95_100.00: 4891
+

@@ -98,6 +98,7 @@ The final VCF file will contain genotypes for all samples including the newly ad
 
 #### Create a new VCF with only SNPs and not the indels for now (insertions/deletions_)
 
+```{bash}
 #!/bin/bash
 #
 #SBATCH --nodes=1
@@ -137,6 +138,7 @@ For the first allele, the base found at the genomic position in the POS column i
 
 #### Creating a high quality snp callsetusing GATK VariantFiltration
 
+```{bash}
 #!/bin/bash
 #
 #SBATCH --nodes=1
@@ -170,26 +172,23 @@ gatk VariantFiltration \
 echo "Job ended at $(date)"
 slurm_template.sh (END)
 
-Q3.2 Review the output VCF.
+### Review the output VCF.
 
 ```{bash}
 gunzip -c <vcf file> | grep -v '^#' | less # Type "q" to exit less when finished
 ```
 
-Now answer the following [ 1 point ]:
+One record that passed the filtering criterion. What is the Depth of this variant across samples? What is the SNP quality?  
 
-Q3.2a Report one record that passed the filtering criterion. What is the Depth of this variant across samples? What is the SNP quality?  
-
-1       13774   .       C       T       51.24   MQ40    AC=1;AF=0.071;AN=14;BaseQRankSum=0.00;ClippingRankSum=0.00;DP=11;ExcessHet=3.0103;FS=0.000;InbreedingCoeff=0.2924;MLEAC=4;MLEAF=0.286;MQ=23.67;MQRankSum=0.967;QD=17.08;RAW_MQ=1681.00;ReadPosRankSum=-9.670e-01;SOR=1.179      GT:AD:DP:GQ:PL  ./.:0,0:0:.:0,0,0       0/0:1,0:1:3:0,3,22      ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0
-       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       0/0:1,0:1:3:0,3,34      ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       0/0:1,0:1:3:0,3,13      ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       0/1:1,2:3:19:48,0,19
-    ./.:0,0:0:.:0,0,0       ./.:0,0:0:.:0,0,0       0/0:2,0:2:6:0,6,52      ./.:0,0:0:.:0,0,0       0/0:2,0:2:6:0,6,51      0/0:1,0:1:3:0,3,38      ./.:0,0:0:.:0,0,0
+1       13774   .       C       T       51.24   MQ40    AC=1;AF=0.071;AN=14;BaseQRankSum=0.00;ClippingRankSum=0.00;DP=11;ExcessHet=3.0103;FS=0.000;InbreedingCoeff=0.2924;MLEAC=4;MLEAF=0.286;MQ=23.67;MQRankSum=0.967;QD=17.08;RAW_MQ=1681.00;ReadPosRankSum=-9.670e-01;SOR=1.179      GT:AD:DP:GQ:PL  ./.:0,0:0:.:0,0,0       0/0:1,0:1:3:0,3,22    
 
 The Depth of the variant across samples (DP) is 11.
 
 The SNP quality (QUAL) is 51.24.
 
-Q3.2b Report one record that failed one or more filters then answer which filters did it fail? What is the threshold of the filter(s) that it failed and what is the value(s) for the filter for the SNP in question?  
-1	10358	.	A	T	39.63	MQ40	AC=1;AF=0.050;AN=20;BaseQRankSum=-9.670e-01;ClippingRankSum=0.00;DP=37;ExcessHet=3.0103;FS=0.000;InbreedingCoeff=0.2864;MLEAC=3;MLEAF=0.150;MQ=29.26;MQRankSum=-9.670e-01;QD=13.21;RAW_MQ=8561.00;SOR=0.223	GT:AD:DP:GQ:PL	./.:0,0:0:.:0,0,0	./.:0,0:0:.:0,0,0	0/0:3,0:3:0:0,0,47	0/0:5,0:5:6:0,6,90	./.:0,0:0:.:0,0,0	0/0:1,0:1:3:0,3,22	./.:0,0:0:.:0,0,0	./.:0,0:0:.:0,0,0	./.:0,0:0:.:0,0,0	./.:0,0:0:.:0,0,0	./.:0,0:0:.:0,0,0	./.:0,0:0:.:0,0,0	./.:0,0:0:.:0,0,0	./.:1,0:1:.:0,0,0	./.:0,0:0:.:0,0,0	0/0:4,0:4:6:0,6,90	./.:2,0:2:.:0,0,0	0/1:1,2:3:32:40,0,32	./.:0,0:0:.:0,0,0	0/0:4,0:4:12:0,12,119	0/0:3,0:3:3:0,3,45	0/0:3,0:3:6:0,6,90	./.:0,0:0:.:0,0,0	0/0:3,0:3:3:0,3,45	./.:0,0:0:.:0,0,0	0/0:1,0:1:3:0,3,42	./.:1,0:1:.:0,0,0	./.:1,0:1:.:0,0,0	./.:1,0:1:.:0,0,0
+One  record that failed one or more filters then answer which filters did it fail? 
+What is the threshold of the filter(s) that it failed and what is the value(s) for the filter for the SNP in question?  
+1	10358	.	A	T	39.63	MQ40	AC=1;AF=0.050;AN=20;BaseQRankSum=-9.670e-01;ClippingRankSum=0.00;DP=37;ExcessHet=3.0103;FS=0.000;InbreedingCoeff=0.28
 
 The SNP in question has the following filter tags and values:
 
@@ -200,22 +199,19 @@ ReadPosRankSum-8 (passed)
 QD2 (failed) with a QD value of 13.21 (the threshold is QD < 2.0)
 QUAL30 (failed) with a QUAL value of 39.63 (the threshold is QUAL < 30.0)
 SOR3 (passed)
+
 So the SNP failed the QD2 and QUAL30 filters.
 
 
-Q3.3 Create a job submission script with the following command line to remove SNPs that failed the filter criteria from the VCF.  
+Remove SNPs that failed the filter criteria from the VCF: 
 
-[mpg8596@log-1 task1]$ sbatch slurm_template.sh
-Submitted batch job 30595347
+```{bash}
+gatk SelectVariants \
+-R /scratch/work/courses/BI7653/hw3.2023/hg38/Homo_sapiens.GRCh38.dna_sm.primary_assembly.normalized.fa \
+-V <vcf with hard-filtered snps> \
+--exclude-filtered \
+-O <output vcf name>
+```
 
-How many snps are in your final filtered callset? [ 1 point ].  
+Number of snps are in the final filtered callset? 
 81202
-
-
-#### You are finished, please review the Completing your assignment section above before submitting your report.
-
-
-
-
-
-
