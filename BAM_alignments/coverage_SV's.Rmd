@@ -1,0 +1,159 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+### Calculate coverage depth from BAM files and identify coverage depth anomalies associated with structural variants.
+
+#### About the data
+
+Short read data from the haploid alga *Chlamydomonas reinhardtii* that were aligned to the Chlamydomonas reference genome using BWA aln.
+
+These data were published in Flowers JM, Hazzouri KM, Pham GM, et al. Whole-Genome Resequencing Reveals Extensive Natural Variation in the Model Green Alga Chlamydomonas reinhardtii. Plant Cell. 2015;27(9):2353-2369. doi:10.1105/tpc.15.00492
+
+#### Summarize coverage and insert size distribution from BAM alignments
+
+Use the Samtools stats program to determine coverage (average coverage genome-wide) for paired-end (2 x 51 PE) reads from a Chlamydomonas strain CC-2342: 
+
+run samtools stat and use the “bases mapped (cigar)” entry and divide by genome size in bp:
+
+Option 1 bases mapped/genome size in bp 7382021182/120000000 = 61.52
+ 
+what are two reasons why it might it not be accurate to simply count the number of reads in the alignment (e.g., samtools view -c ), multiply by the read length from the sequencing (e.g., 100 in a 2 X 100 PE run), and divide by the genome size? 
+
+Duplicate reads: Many sequencing libraries contain duplicate reads that can arise due to PCR amplification during library preparation or optical duplication during sequencing. These duplicate reads can artificially inflate the coverage depth if they are not removed before the coverage depth calculation. Therefore, it's important to remove duplicate reads before calculating coverage depth to obtain accurate results.
+
+Uneven read coverage: The sequencing depth can vary across different regions of the genome due to various factors such as GC content, repetitive regions, and biases introduced during library preparation or sequencing. Therefore, simply dividing the total number of bases by the genome size can lead to an overestimation or underestimation of the coverage depth. To obtain an accurate estimate of the coverage depth, it's necessary to take into account the variability in sequencing depth across the genome by using tools such as genome-wide coverage plots or by normalizing the read counts by the library size and the genomic mappability.
+
+MQ0 represents the mapping quality of zero, which is a flag that indicates the best possible mapping position for a read is not uniquely determined, meaning that the read has multiple potential positions in the reference genome that have the same alignment score. In other words, there is no clear best place to map the read, and the read could map equally well to multiple locations in the reference genome.
+
+Given the definition of MQ0, we would expect to find MQ0 reads mapped to gene A (or A') in the reference in situation (a), where gene A is duplicated in the reference to form identical copies gene A and A', but is a single-copy gene A in the sequenced sample. In this situation, reads that map equally well to both copies of gene A (i.e., gene A and A') may be assigned to one or the other arbitrarily, leading to ambiguous mapping and potentially resulting in MQ0 reads. 
+
+crude method to predict deletions using this empirical insert size distribution:
+
+To predict deletions using the empirical insert size distribution in the samtools stat output, we can look for insert sizes that are overrepresented or underrepresented compared to the expected distribution. 
+
+The rationale for this test is that deletions in the sample genome will cause a reduction in the insert size of paired-end reads that span the deleted region. Therefore, we expect to see a shift in the insert size distribution towards smaller values for regions that have deletions.
+
+Deletions will have larger than expected insert sizes when mapped to the reference, and therefore will most likely be found in the upper tail of the distribution. Therefore, the upper tail is the region that should be enriched for deletions and would be the reasonable threshold.
+
+A reasonable threshold insert size above which reads are likely to be enriched for deletions in the sample genome could be determined by comparing the insert size distribution in the sample to the expected distribution based on the library preparation protocol. 
+
+For example, if the expected insert size for the library is 300 bp, we might consider any insert size below 200 bp to be enriched for deletions. However, the specific threshold will depend on the library preparation protocol and the expected insert size distribution.
+
+####Coverage depth in genomic regions and copy number variant discovery
+
+What is the read depth at position 10,001 on chromosome_1 for sample CR2342? 
+
+samtools depth -r chromosome_1:10001-10020 /scratch/work/courses/BI7653/hw6.2023/CR2342.bam 
+241
+
+Using the samtools bedcov command to calculate coverage depth in specific genomic intervals for two samples (CR407 and CR2342) from BAM alignment files
+
+BED is a standard format for storing genomic intervals NGS analysis. Typically BED is tab-delimited plain text with three columns chromosome,start and end position. The start position in BED is "zero-based" (the genomic interval start position minus one) while the end position of each interval is "one-based" (the genomic interval end position).
+
+Data Preparation:
+
+Two BAM files, one for each sample: CR407.bam and CR2342.bam.
+A BED file containing genomic intervals you want to calculate coverage for: chromosome_1.500bp_intervals.bed.
+The BED file contains three columns: chromosome, start position, and end position of intervals. It uses a "zero-based" start position and "one-based" end position for each interval.
+
+
+```{bash}
+# review the file showing hidden characters (^I = tab, $ = \n end of line character)
+cat -et /scratch/work/courses/BI7653/hw6.2023/chromosome_1.500bp_intervals.bed | less # q to exit
+```
+
+```{bash}
+#!/bin/bash
+#
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=8:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=bedcov
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load samtools/intel/1.14
+
+# Define input and output files
+bam_files="/scratch/work/courses/BI7653/hw6.2023/CR407.bam /scratch/work/courses/BI7653/hw6.2023/CR2342.bam"
+bed_file="/scratch/work/courses/BI7653/hw6.2023/chromosome_1.500bp_intervals.bed"
+output_file="coverage_depth.txt"
+
+# Run samtools bedcov
+samtools bedcov $bed_file $bam_files > $output_file
+
+bedcov.sh (END)
+
+```
+
+Coverage of the last 10 intervals CR407 and CR2342 in the output file: 
+
+40220	48758
+45783	64512
+43456	59614
+40968	59499
+35992	46583
+25076	41503
+30051	34051
+37756	34211
+39109	40852
+
+
+Q2.3 Include your plot in your MarkDown report or use the example code to create a pdf (which you must submit with your answer) [ 1 point ]
+
+library(tidyverse)
+
+set the working directory to where the file is located
+setwd("/Users/mariagarzon/Downloads/")
+
+check that the working directory has been set correctly
+getwd()
+
+read in the file
+bedcov.tbl_df <- read.table("coverage_output.txt", sep = "\t", col.names = c("chr", "start", "end", "CR407_dp", "CR2342_dp"), colClasses = c("character", "integer", "integer", "integer", "integer"))
+
+add columns to data frame with normalized depth values for each strain
+bedcov.tbl_df <- bedcov.tbl_df %>% 
+  mutate(CR407_normdp = log2( CR407_dp / median(CR407_dp, na.rm = TRUE)),
+         CR2342_normdp = log2( CR2342_dp / median(CR2342_dp, na.rm = TRUE)))
+
+transform data frame into long format for ggplot
+bedcov_pivoted.tbl_df <- bedcov.tbl_df %>%
+  select(-CR407_dp,-CR2342_dp) %>%
+  pivot_longer(cols = c(-chr,-start,-end), 
+               names_to = 'sample', 
+               values_to = 'normalized_depth')
+
+create a pdf file for the plot
+pdf("normalized_depth.pdf", width = 10, height = 6)
+
+create the plot using ggplot2
+ggplot(bedcov_pivoted.tbl_df, aes(x = start, y = normalized_depth)) +
+  geom_point(size = 0.5, color = "#0072B2") +
+  facet_wrap(~ sample, nrow = 2) +
+  theme_bw()
+
+close the pdf file
+dev.off()
+
+Which sample has a large (~ 400 kb) duplication on chromosome 1? Approximately what position on the chromosome is the duplication?
+  
+Based on the plot, you can see that the sample labeled "CR2342_dp" has a significantly higher normalized depth than the rest of the samples, indicating a potential large duplication on chromosome 1.
+
+From the plot, it appears that the region with the highest normalized depth corresponds to chromosome positions 450,000-470,000. Therefore, it is likely that the duplication is located somewhere within this region.
+
+What is the approximate log2 value in this duplicated region? Based on this log2 value, what do you think the copy number of this duplication might be given that Chlamydomonas are haploid?
+
+The approximate value is around 2.
+
+Since Chlamydomonas are haploid, the copy number of this duplication can be estimated by comparing the normalized depth of the duplicated region to the normalized depth of the rest of the genome.If the log2 value of the normalized depth of the duplicated region is greater than zero, it suggests that the region is duplicated, and the copy number would be approximately 2 (i.e., two copies of the region).In the case where the log2 value of the normalized depth is much greater than zero, it suggests that the region is amplified, and the copy number could be higher than 2. Conversely, if the log2 value of the normalized depth is less than zero, it suggests that the region is deleted, and the copy number could be less than 2.
