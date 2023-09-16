@@ -1,0 +1,307 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+### align reads from ChIP samples and a control to the human reference genome and apply a narrow peak-calling method.
+
+Assignment objective
+(1) download data from the Sequence Read Archive (SRA) 
+(2) align ChIP-seq reads to a reference genome 
+(3) and run a ChIP peak caller
+
+### Download reads using the sra toolkit.
+
+#### slurm script that downloads the data. 
+
+```{bash}
+#!/bin/bash
+#
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=24:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=data
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=mpg8596@nyu.edu
+#SBATCH --array=1-8
+
+module purge
+
+# Add appropriate module load command here:
+module load sra-tools/2.10.9
+
+fastq-dump -I SRR7207011
+fastq-dump -I SRR7207017
+fastq-dump -I SRR7207089
+```
+
+### Run fastp to process the reads
+
+#### Slurm script that will process the single-end reads downloaded in Task 1 using fastp.
+
+```{batch}
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=24:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=fastp
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load fastp/0.20.1
+
+module load fastp/intel/0.20.1
+
+fastp -i SRR7207011.fastq -o SRR7207011_filtered.fq --length_required=36
+
+fastp -i SRR7207017.fastq -o SRR7207017_filtered.fq --length_required=36
+
+fastp -i SRR7207089.fastq -o SRR7207089_filtered.fq --length_required=36
+
+```
+
+### Align the reads to the reference genome
+
+```{r}
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=24:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=bwa_align
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module purge
+
+module load bwa/intel/0.7.17
+
+bwa mem -M -t $SLURM_CPUS_PER_TASK /scratch/work/courses/BI7653/hw3.2022/hg38/Homo_sapiens.GRCh38.dna_sm.primary_assembly.normalized.fa SRR7207011_filtered.fq > SRR7207011.sam
+
+bwa mem -M -t $SLURM_CPUS_PER_TASK /scratch/work/courses/BI7653/hw3.2022/hg38/Homo_sapiens.GRCh38.dna_sm.primary_assembly.normalized.fa SRR7207017_filtered.fq > SRR7207017.sam
+
+bwa mem -M -t $SLURM_CPUS_PER_TASK /scratch/work/courses/BI7653/hw3.2022/hg38/Homo_sapiens.GRCh38.dna_sm.primary_assembly.normalized.fa SRR7207089_filtered.fq > SRR7207089.sam
+
+```
+
+#### Prepare the BAMs for downstream analysis
+
+```{bash}
+#!/bin/bash
+# 
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=8:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=SAM_BAM
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load samtools/intel/1.14
+
+samtools view -b -h SRR7207011.sam > SRR7207011.bam
+
+samtools view -b -h SRR7207017.sam > SRR7207017.bam
+
+samtools view -b -h SRR7207089.sam > SRR7207089.bam
+
+#Converting SAM to BAM 
+```
+
+#### Coordinate sort reads with Picard tools. 
+
+```{bash}
+#!/bin/bash 
+#
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=8:00:00
+#SBATCH --mem=46GB
+#SBATCH --job-name=picard
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load picard/2.23.8
+
+java -Xmx44g -jar $PICARD_JAR SortSam \
+INPUT=SRR7207011.bam \
+OUTPUT=SRR7207011_picard.bam \
+SORT_ORDER=coordinate \
+TMP_DIR="${SLURM_JOBTMP}" \
+MAX_RECORDS_IN_RAM=10000000 \
+VALIDATION_STRINGENCY=LENIENT
+
+java -Xmx44g -jar $PICARD_JAR SortSam \
+INPUT=SRR7207017.bam \
+OUTPUT=SRR7207017_picard.bam \
+SORT_ORDER=coordinate \
+TMP_DIR="${SLURM_JOBTMP}" \
+MAX_RECORDS_IN_RAM=10000000 \
+VALIDATION_STRINGENCY=LENIENT
+
+java -Xmx44g -jar $PICARD_JAR SortSam \
+INPUT=SRR7207089.bam \
+OUTPUT=SRR7207089_picard.bam \
+SORT_ORDER=coordinate \
+TMP_DIR="${SLURM_JOBTMP}" \
+MAX_RECORDS_IN_RAM=10000000 \
+VALIDATION_STRINGENCY=LENIENT
+```
+
+#### Create a BAM index
+
+```{r}
+#!/bin/bash
+# 
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=8:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=SAM_BAM
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load samtools/intel/1.14
+
+samtools index SRR7207011_picard.bam SRR7207011_coordinatesorted.out.index
+
+samtools index SRR7207017_picard.bam SRR7207017_coordinatesorted.out.index
+
+samtools index SRR7207089_picard.bam SRR7207089_coordinatesorted.out.index
+
+#Converting SAM to BAM 
+```
+
+```{r}
+#!/bin/bash
+# 
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=8:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=SAM_BAM
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load samtools/intel/1.14
+
+samtools view -b -h -q 20 SRR7207011_picard.bam > SRR7207011_filteredmp.bam
+
+samtools view -b -h -q 20 SRR7207017_picard.bam > SRR7207017_filteredmp.bam
+
+samtools view -b -h -q 20 SRR7207089_picard.bam > SRR7207089_filteredmp.bam
+```
+
+```{r}
+
+#!/bin/bash
+# 
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=8:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=SAM_BAM
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load samtools/intel/1.14
+
+samtools index SRR7207011_filteredmp.bam SRR7207011_coordinatesorted_filterd.out.index
+
+samtools index SRR7207017_filteredmp.bam SRR7207017_coordinatesorted_filterd.out.index
+
+samtools index SRR7207089_filteredmp.bam SRR7207089_coordinatesorted_filterd.out.index
+
+```
+
+#### Remove multiply-mapped reads 
+
+```{r}
+#!/bin/bash
+# 
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=8:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=BAM_filter
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load samtools/intel/1.14
+
+samtools view -b -h -q 20 SRR7207011_picard.bam > SRR7207011_filteredmp.bam
+
+samtools view -b -h -q 20 SRR7207017_picard.bam > SRR7207017_filteredmp.bam
+
+samtools view -b -h -q 20 SRR7207089_picard.bam > SRR7207089_filteredmp.bam
+```
+
+```{r}
+#!/bin/bash
+# 
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=2
+#SBATCH --time=8:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=BAM_index
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load samtools/intel/1.14
+
+samtools index SRR7207011_filteredmp.bam SRR7207011_coordinatesorted_filterd.out.index
+
+samtools index SRR7207017_filteredmp.bam SRR7207017_coordinatesorted_filterd.out.index
+
+samtools index SRR7207089_filteredmp.bam SRR7207089_coordinatesorted_filterd.out.index
+```
+
+### Run MACS2 to call peaks
+
+```{bash}
+#!/bin/bash
+# 
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=8:00:00
+#SBATCH --mem=8GB
+#SBATCH --job-name=SAM_BAM
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mail-user=mpg8596@nyu.edu
+
+module load macs2/intel/2.2.7.1
+
+macs2 callpeak -t SRR7207011_filteredmp.bam -c SRR7207089_filteredmp.bam -f BAM -g hs -n SRR7207011_filteredmp_macs2 -B -q 0.01
+
+macs2 callpeak -t SRR7207017_filteredmp.bam -c SRR7207089_filteredmp.bam -f BAM -g hs -n SRR7207017_filteredmp_macs2 -B -q 0.01
+```
+
+##### The primary objective of a transcription factor ChIP-seq experiment is to determine the genomic regions that are bound by a specific transcription factor. This information can be used to identify potential target genes regulated by the transcription factor and to elucidate its role in gene expression. By analyzing the DNA sequences associated with the binding sites, this technique can also provide insight into the DNA sequence motifs recognized by the transcription factor.
+
+#### The human genome is highly repetitive. There are segmental duplications, low complexity sequence and transposable elements all of which may also harbor transcription factor binding sites. How reads map to these regions should always be a concern in NGS applications. In ChIP-seq it is common practice to remove multiply-mapped reads ('multireads'), but this is not always advisable and in fact Chung et al. 2011 argue for not removing multiply-mapped reads. Review Chung et al. 2011 <https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002111> and select all statements below that are true. (note: most answers can be found in the Abstratct and Introduction) [ 1 point ].
+
+##### The statements below are true:
+##### a) The authors argue that the primary problem with not considering multiply mapped reads is that it could lead to the identification of false peaks, not that you don't know where in the genome the reads actually map.
+##### c) many multiply mapped reads map to segmental duplication regions are true statements according to Chung et al. 2011.
+##### b) Discarding multiply mapped reads could introduce false negatives (failure to detect true peaks)
+##### d) The authors argue that including multiply-mapped reads in moderate to highly mappable regions can improve peak identification.
+##### e) This statement is false, as transcription factor binding sites can be present in repetitive regions of the genome. 
