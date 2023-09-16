@@ -1,3 +1,9 @@
+---
+  editor_options: 
+  markdown: 
+  wrap: 72
+---
+
 Purpose: Aligned short reads to the human reference genome and used samtools to process SAM/BAM short read alignments. 
 This is part of multi-week “re-sequencing” workflow where the aim is to call single nucleotide polymorphisms (SNPs) from Illumina 
 short read sequencing of human genomes.
