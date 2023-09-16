@@ -2,8 +2,7 @@
 
 ## Overview
 This assignment focuses on conducting differential gene expression analysis using the DESeq2 package in R. 
-I worked with RNA-seq data from date palm fruit and investigated differential gene expression between date palm varieties with 
-high sucrose content and low sucrose content.
+I worked with RNA-seq data from date palm fruit and investigated statistically and biologically significant differential gene expression between date palm varieties with high sucrose content and low sucrose content.
 
 ## Dataset
 Source: RNA-seq data from date palm fruit.
