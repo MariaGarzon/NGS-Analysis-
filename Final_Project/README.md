@@ -26,7 +26,7 @@ understanding of gene regulation in this context.
 
 ## Step 1: Data Processing and Quality Control:
 
-#### The RNA-seq data consisted of libraries from three biological replicates of control cell lines and three biological replicates with NRDE2 gene silencing using RNAi. #### The libraries were single-end (SE) sequenced on an Illumina NextSeq platform. The following steps were performed for data processing and quality control:
+The RNA-seq data consisted of libraries from three biological replicates of control cell lines and three biological replicates with NRDE2 gene silencing using RNAi. The libraries were single-end (SE) sequenced on an Illumina NextSeq platform. The following steps were performed for data processing and quality control:
   
 ### 1. Trimming of FastQ Files:
 The raw FastQ files were subjected to trimming using the fastp tool. This tool automatically removed adapters from the single-end reads and 
@@ -54,32 +54,32 @@ This analysis provided information about various quality metrics, including sequ
 
 ### 3. MultiQC Report Generation:
 To summarize the quality control results across all samples, a MultiQC report was generated. The MultiQC tool combined the FastQC reports 
-from each sample and provided a consolidated overview of the quality control metrics. This facilitated the identification of common quality patterns #### or issues across the control and NRDE2 knockdown samples.
+from each sample and provided a consolidated overview of the quality control metrics. This facilitated the identification of common quality patterns or issues across the control and NRDE2 knockdown samples.
 Overall, the GC content remained consistent before and after filtering.
 Per Sequence Quality Scores representing the distribution of quality scores for all sequences all show a the majority of sequences having a 
 high-quality scores, overall above a threshold of 20 or 30.
 No samples found with any adapter contamination > 0.1%.
 6 samples had less than 1% of reads made up of overrepresented sequences.
-All 6 reads failed the Per Base Sequence Content metric in the MultiQC report, suggesting that there may be issues with the sequence content across #### different positions in the reads. A failure in the Per Base Sequence Content metric could indicate several potential problems such as biases or 
+All 6 reads failed the Per Base Sequence Content metric in the MultiQC report, suggesting that there may be issues with the sequence content across different positions in the reads. A failure in the Per Base Sequence Content metric could indicate several potential problems such as biases or 
 skewness in the nucleotide composition if the distribution of nucleotides is highly skewed or imbalanced at certain positions, it could suggest 
-biases in the library preparation or sequencing process. For example, it could be caused by biased PCR amplification or nucleotide misincorporation #### during sequencing. Also, if the sequencing process introduces systematic errors or biases, it can result in irregular patterns in the nucleotide #### distribution. 
+biases in the library preparation or sequencing process. For example, it could be caused by biased PCR amplification or nucleotide misincorporation during sequencing. Also, if the sequencing process introduces systematic errors or biases, it can result in irregular patterns in the nucleotide distribution. 
 
 ### 4. Downloaded the reference genome: 
-I obtained the "Homo_sapiens.GRCh38.cdna.all.fa.gz" reference genome file. This file contains the transcript sequences of the Homo sapiens (human) #### genome.
-Unzipped the transcripts fasta and ran Picard tools NormalizeFasta. Specifically the NormalizeFasta tool, to process the transcript sequences. The #### NormalizeFasta #### tool removes everything after the transcript ID, resulting in a simplified version of the transcript sequences.
+I obtained the "Homo_sapiens.GRCh38.cdna.all.fa.gz" reference genome file. This file contains the transcript sequences of the Homo sapiens (human) genome.
+Unzipped the transcripts fasta and ran Picard tools NormalizeFasta. Specifically the NormalizeFasta tool, to process the transcript sequences. The NormalizeFasta tool removes everything after the transcript ID, resulting in a simplified version of the transcript sequences.
 This step ensures consistency in the transcript ID format and reduces any potential complications during downstream analysis.
 
 ### 5. Generated a Salmon index: 
-Using the simplified transcript sequences, I created a Salmon index. The Salmon index is a pre-built data structure that enables efficient mapping #### and quantification of RNA-seq reads to the reference transcriptome. This step involved running the Salmon command with the following parameters: -t #### normalized_sequence.fasta specifies the input file containing the normalized transcript sequences, -i transcripts_index defines the output directory #### or prefix for the Salmon index, and -k 31 specifies the length of k-mers used ### for indexing.
+Using the simplified transcript sequences, I created a Salmon index. The Salmon index is a pre-built data structure that enables efficient mapping and quantification of RNA-seq reads to the reference transcriptome. This step involved running the Salmon command with the following parameters: -t normalized_sequence.fasta specifies the input file containing the normalized transcript sequences, -i transcripts_index defines the output directory or prefix for the Salmon index, and -k 31 specifies the length of k-mers used for indexing.
 
 ### 6. Running Salmon in mapping-based mode using a command appropriate for single-end data.
-a. The script defines several variables to store relevant information. The table variable holds the path to a 2-column (tab-delimited) table file #### that contains sample names and corresponding fastq file names. The line variable extracts a specific line from the table file based on 
-the current array index. The sample variable stores the sample name extracted from the line, and the fq1 variable stores the corresponding fastq #### file name.
-b. The fqdir variable holds the path to the directory where the fastq files are located. The salmon_index_dir variable stores the directory path of #### the Salmon index that was generated in a previous step. These paths are necessary for providing the input files and output directory for the salmon #### quantification process.
+a. The script defines several variables to store relevant information. The table variable holds the path to a 2-column (tab-delimited) table file that contains sample names and corresponding fastq file names. The line variable extracts a specific line from the table file based on 
+the current array index. The sample variable stores the sample name extracted from the line, and the fq1 variable stores the corresponding fastq file name.
+b. The fqdir variable holds the path to the directory where the fastq files are located. The salmon_index_dir variable stores the directory path of the Salmon index that was generated in a previous step. These paths are necessary for providing the input files and output directory for the salmon quantification process.
 c. A new directory is created with the name of the current sample. This ensures that the output files from Salmon quantification are organized and #### stored separately for each sample.
 #### Changing to the sample directory: The script changes the current working directory to the newly created sample directory using the cd command. This #### ensures that the subsequent Salmon command is executed within the correct directory.
-d. The Salmon quant command is executed with the specified parameters. -i ${salmon_index_dir} specifies the path to the Salmon index directory. -l A #### indicates that the library type is "A" (unstranded). -r $fqdir/$fq1 specifies the input fastq file for the sample. --validateMappings enables 
-mapping validation. --gcBias enables GC bias correction. --threads ${SLURM_CPUS_PER_TASK} specifies the number of threads to be used for parallel #### processing. -o $sample.transcripts_quant defines the output directory or prefix for the Salmon quantification results.
+d. The Salmon quant command is executed with the specified parameters. -i ${salmon_index_dir} specifies the path to the Salmon index directory. -l A indicates that the library type is "A" (unstranded). -r $fqdir/$fq1 specifies the input fastq file for the sample. --validateMappings enables 
+mapping validation. --gcBias enables GC bias correction. --threads ${SLURM_CPUS_PER_TASK} specifies the number of threads to be used for parallel processing. -o $sample.transcripts_quant defines the output directory or prefix for the Salmon quantification results.
 
 #### Salmon inferred the library to be a stranded single-end protocol where the reads from come the reverse strand. 
 
