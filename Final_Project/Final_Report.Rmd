@@ -1,0 +1,237 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+# Methods 
+
+
+## Step 1: Data Processing and Quality Control:
+
+#### The RNA-seq data consisted of libraries from three biological replicates of control cell lines and three biological replicates with NRDE2 gene silencing using RNAi. #### The libraries were single-end (SE) sequenced on an Illumina NextSeq platform. The following steps were performed for data processing and quality control:
+  
+### 1. Trimming of FastQ Files:
+#### The raw FastQ files were subjected to trimming using the fastp tool. This tool automatically removed adapters from the single-end reads and 
+#### eliminates polyG sequences introduced during sequencing on the Illumina NextSeq platform. The bash script used was designed to process multiple 
+#### samples in parallel using array indexing. Each sample's FastQ file was trimmed and subjected to quality control analysis individually. 
+#### Array Indexing and Variable Assignment:
+#### The script uses SLURM_ARRAY_TASK_ID environmental variable to identify the current array index.
+#### It extracts the corresponding sample name and FastQ file name from the table using the "head", "tail", and "cut" commands.
+#### The sample name is assigned to the variable "sample", and the FastQ file name is assigned to the variable "fq".
+#### Directory Setup:
+#### The script creates a directory for the current sample using the "mkdir" command and navigates to it using "cd".
+#### Output Filename:
+#### The script defines the output filename for the trimmed FastQ file by removing the file extension and adding ".fP.fastq.gz" (forward paired) suffix.
+#### The output filename is assigned to the variable "fq_fastp".
+#### Trimming with fastp:
+#### The script runs the fastp tool on the sample FastQ file using the "fastp" command.
+#### It specifies input and output files, sets trimming parameters (length_required, n_base_limit), and generates an HTML report and a JSON file 
+#### for further analysis.
+#### After trimming, the script runs FastQC on the processed RNA-seq read using the "fastqc" command.
+#### The trimmed FastQ file is specified as input.
+
+### 2. Quality Control Assessment with FastQC:
+#### After trimming, the processed RNA-seq reads from each sample were individually subjected to quality control analysis using the FastQC tool. 
+#### This analysis provided information about various quality metrics, including sequence length distribution, per-base quality scores, GC content and #### the presence of #### any remaining sequencing artifacts or biases. 
+
+### 3. MultiQC Report Generation:
+#### To summarize the quality control results across all samples, a MultiQC report was generated. The MultiQC tool combined the FastQC reports 
+#### from each sample and provided a consolidated overview of the quality control metrics. This facilitated the identification of common quality patterns #### or issues across the control and NRDE2 knockdown samples.
+#### Overall, the GC content remained consistent before and after filtering.
+#### Per Sequence Quality Scores representing the distribution of quality scores for all sequences all show a the majority of sequences having a 
+#### high-quality scores, overall above a threshold of 20 or 30.
+#### No samples found with any adapter contamination > 0.1%.
+#### 6 samples had less than 1% of reads made up of overrepresented sequences.
+#### All 6 reads failed the Per Base Sequence Content metric in the MultiQC report, suggesting that there may be issues with the sequence content across #### different positions in the reads. A failure in the Per Base Sequence Content metric could indicate several potential problems such as biases or 
+#### skewness in the nucleotide composition if the distribution of nucleotides is highly skewed or imbalanced at certain positions, it could suggest 
+#### biases in the library preparation or sequencing process. For example, it could be caused by biased PCR amplification or nucleotide misincorporation #### during sequencing. Also, if the sequencing process introduces systematic errors or biases, it can result in irregular patterns in the nucleotide #### distribution. 
+
+### 4. Downloaded the reference genome: 
+#### I obtained the "Homo_sapiens.GRCh38.cdna.all.fa.gz" reference genome file. This file contains the transcript sequences of the Homo sapiens (human) #### genome.
+#### Unzipped the transcripts fasta and ran Picard tools NormalizeFasta. Specifically the NormalizeFasta tool, to process the transcript sequences. The #### NormalizeFasta #### tool removes everything after the transcript ID, resulting in a simplified version of the transcript sequences.
+#### This step ensures consistency in the transcript ID format and reduces any potential complications during downstream analysis.
+
+### 5. Generated a Salmon index: 
+#### Using the simplified transcript sequences, I created a Salmon index. The Salmon index is a pre-built data structure that enables efficient mapping #### and quantification of RNA-seq reads to the reference transcriptome. This step involved running the Salmon command with the following parameters: -t #### normalized_sequence.fasta specifies the input file containing the normalized transcript sequences, -i transcripts_index defines the output directory #### or prefix for the Salmon index, and -k 31 specifies the length of k-mers used ### for indexing.
+
+### 6. Running Salmon in mapping-based mode using a command appropriate for single-end data.
+#### a. The script defines several variables to store relevant information. The table variable holds the path to a 2-column (tab-delimited) table file #### that contains sample names and corresponding fastq file names. The line variable extracts a specific line from the table file based on 
+#### the current array index. The sample variable stores the sample name extracted from the line, and the fq1 variable stores the corresponding fastq #### file name.
+#### b. The fqdir variable holds the path to the directory where the fastq files are located. The salmon_index_dir variable stores the directory path of #### the Salmon index that was generated in a previous step. These paths are necessary for providing the input files and output directory for the salmon #### quantification process.
+#### c. A new directory is created with the name of the current sample. This ensures that the output files from Salmon quantification are organized and #### stored separately for each sample.
+#### Changing to the sample directory: The script changes the current working directory to the newly created sample directory using the cd command. This #### ensures that the subsequent Salmon command is executed within the correct directory.
+#### d. The Salmon quant command is executed with the specified parameters. -i ${salmon_index_dir} specifies the path to the Salmon index directory. -l A #### indicates that the library type is "A" (unstranded). -r $fqdir/$fq1 specifies the input fastq file for the sample. --validateMappings enables 
+#### mapping validation. --gcBias enables GC bias correction. --threads ${SLURM_CPUS_PER_TASK} specifies the number of threads to be used for parallel #### processing. -o $sample.transcripts_quant defines the output directory or prefix for the Salmon quantification results.
+
+#### Salmon inferred the library to be a stranded single-end protocol where the reads from come the reverse strand. 
+
+## Step 2: Differential Expression Analysis
+
+### 7. After converting the Salmon TPMs to gene-level counts using tximport, I conducted differential gene expression (DGE) analysis with DESeq2.
+#### a. Defined the sample names (sample_names) and corresponding conditions (sample_condition) in vectors.
+#### b. Specified the folder path (folder_path) where the quant.sf files are located. Then,created the file paths for each sample by concatenating
+#### the folder path with the sample names and the file extension.
+#### c. Read the transcript-to-gene mapping information from the tx2gene.csv file using the read.table function.
+#### d. Used the tximport function to import the transcript quantification data. I provided the file paths, specified the data type as "salmon," 
+#### and passed the tx2gene mapping information.
+#### e. Created a data frame (samples) to store the sample names and conditions. The row names of the data frame were set to the sample names.
+#### f. The DESeqDataSetFromTximport function was used to create a DESeqDataSet object (ddsTxi). I provided the imported transcript quantification
+#### data (txi), the sample metadata (colData), and the design formula (design) specifying the relationship between the conditions.
+#### g. Filtered out genes with low counts by keeping only those genes with a minimum sum of counts across all samples.
+#### h. Performed differential expression analysis using the DESeq function on the filtered DESeqDataSet object (ddsTxi).
+#### i. The results function was applied to the ddsTxi object to extract the differential expression results. 
+#### j. The results were sorted in ascending order based on the p-value, and the top 10 most significant genes were viewed. 
+#### k. To obtain more stable estimates of differential expression, I performed log-fold change shrinkage using the lfcShrink function on the 
+#### ddsTxi object. The coef parameter specified the contrast coefficient, and the shrinkage method was set to 'apeglm'.
+#### l. The shrunken results were ordered based on the adjusted p-value (res.shrunk[order(res.shrunk$pvalue),]).
+
+### The key statistical approaches used are as follows:
+#### Differential Expression Analysis: DESeq2 performs differential expression analysis by fitting a generalized linear model to the count data. 
+#### The design formula ~ condition specifies the comparison of interest, which is the contrast between the "Treated" and "Control" conditions.
+#### Statistical Test: DESeq2 employs a Wald test to assess the significance of the differences in gene expression between the two conditions. 
+#### The log-fold change estimates and associated p-values are calculated using this test.
+#### Multiple-Test Correction: To account for the issue of multiple hypothesis testing, the padj column in the DESeq2 results represents adjusted 
+#### p-values. These p-values are corrected for multiple testing using the Benjamini-Hochberg procedure (FDR correction). By applying the log-fold change #### shrinkage using the lfcShrink function with the type='apeglm' argument, the fold-change estimates are further stabilized and improved, enhancing the #### interpretation of the results. The shrunken log fold-change estimates are provided in theres.shrunkOrdered variable.
+
+
+# Results 
+
+```{r}
+
+library(knitr)
+
+## Create table for Mapping Rate
+mapping_table <- data.frame(
+  Condition = c("treated1", "treated3", "control2", "control1", "treated2", "control3"),
+  Mapping_Rate = c("90.854%", "92.0915%", "90.6273%", "89.3778%", "91.3572%", "91.3243%"),
+  stringsAsFactors = FALSE
+)
+
+
+## Print the resulting table
+print(mapping_table)
+
+   Condition Mapping_Rate
+1  treated1      90.854%
+2  treated3     92.0915%
+3  treated2     91.3572%
+4  control2     90.6273%
+5  control1     89.3778%
+6  control3     91.3243%
+
+## Loading Required Packages
+install.packages("tximport")
+install.packages("DESeq2")
+library(tximport)
+library(DESeq2)
+
+## Setting Sample Information
+sample_names <- c("treated1", "treated2", "treated3", "control1", "control2", "control3")
+sample_condition <- c(rep('Treated',3),rep('Control',3))
+folder_path <- "/Users/mariagarzon/Downloads/final_ngs/"
+sample_paths <- paste0(folder_path, sample_names, "/quant.sf")
+
+files <- file.path(sample_paths)
+names(files) <- sample_names
+
+tx2gene <- read.table("/Users/mariagarzon/Downloads/final_ngs/tx2gene.csv",header=F,sep=",") ## CSV file containing transcript-to-gene mapping information.
+
+## Importing Transcript Quantification Data
+txi <- tximport(files, type="salmon", tx2gene=tx2gene)
+
+## Creating Sample Metadata
+samples <- data.frame(sample_names=sample_names,condition=sample_condition)
+row.names(samples) <- sample_names
+
+## Create DESeqDataSet object
+ddsTxi <- DESeqDataSetFromTximport(txi,
+                                   colData = samples,
+                                   design = ~ condition)
+class(ddsTxi)
+
+keep <- rowSums(counts(ddsTxi)) >= 10 # filter out genes with low counts
+dds <- ddsTxi[keep,]
+
+## Differential Expression Analysis
+ddsTxi <- DESeq(ddsTxi)
+class(ddsTxi)
+
+## Extracting results from the DESeq2 analysis using the “results” function.
+## The results function is applied to ddsTxi to extract the differential expression results, 
+## specifically contrasting the "Treated" and "Control" conditions.
+res <- results(ddsTxi, contrast = c('condition','Treated','Control') )
+class(res) 
+
+## Soring the data in ascending p-value
+resOrdered <- res[order(res$pvalue),] 
+head(resOrdered,10) # View the 10 most significant genes
+
+## Perform log-fold change shrinkage for more stable estimates of differential expression
+res.shrunk <- lfcShrink(ddsTxi, coef=2, type='apeglm')
+res.shrunkOrdered <- res.shrunk[order(res.shrunk$pvalue),]
+
+resOrdered
+res.shrunkOrdered # ordered by adjusted p-value
+
+
+## MA plots for raw and shrunk results 
+plotMA(res)
+plotMA(res.shrunk)
+
+### The shrunken MA plot represents the differential expression analysis with log-fold change shrinkage, which helps to stabilize the estimates of differential expression.
+### The shrunken MA plot has a tighter distribution of points around the center line compared to the raw MA plot.
+
+## Top Differentially Expressed Genes based on adjusted p-value
+top10genes <- head(res.shrunkOrdered, 10)
+#### Top 10 differentially expressed genes according to adjusted p-value 
+top10genes
+log2 fold change (MAP): condition Treated vs Control 
+Wald test p-value: condition Treated vs Control 
+DataFrame with 10 rows and 5 columns
+baseMean log2FoldChange     lfcSE       pvalue         padj
+<numeric>      <numeric> <numeric>    <numeric>    <numeric>
+ENSG00000196396.10   6561.59       1.154994 0.0437049 3.23202e-155  4.30279e-151
+ENSG00000175334.8    6404.59       1.658194 0.0646399 2.12129e-146  1.41204e-142
+ENSG00000206286.11   2775.24      -1.384980 0.0596141 1.23519e-120  5.48135e-117
+ENSG00000128595.17  19576.72       1.478563 0.0710831  2.26447e-97  7.53672e-94
+ENSG00000101384.12  11621.67       1.286671 0.0628566  1.21088e-94  3.22408e-91
+ENSG00000124333.16   2706.82       1.458485 0.0736103  1.36364e-88  3.02568e-85
+ENSG00000117632.23  16592.10       1.329956 0.0717960  7.99474e-78  1.52049e-74
+ENSG00000143384.13  21042.16       1.024778 0.0562517  2.59931e-75  4.32558e-72
+ENSG00000145919.11   2678.78       1.265271 0.0721386  4.17755e-70  6.17952e-67
+ENSG00000144028.15  12238.69      -0.812422 0.0466342  4.23595e-69  5.63932e-66
+
+### ENSG00000196396.10, ENSG00000175334.8,ENSG00000128595.17,ENSG00000101384.12, and ENSG00000124333.16,ENSG00000117632.23, all have a large log fold-change and an extremely small adjusted p-value, indicating a significant and substantial difference in expression between the treated and control conditions. ENSG00000206286.11  has a moderate negative log fold-change and a very small adjusted p-value. Although it has a significant statistical difference between the treated and control conditions, further examination is required. ENSG00000143384.13 and ENSG00000145919.11 have a moderate negative log fold-change and a very small adjusted p-value. Although it has a significant statistical difference between the treated and control conditions, further examination is required to determine its biological relevance.
+
+## Number of statistically significant genes at an FDR of 0.05
+chosen_FDR <- 0.05
+significant_genes <- sum(res.shrunkOrdered$padj < chosen_FDR, na.rm = TRUE)
+significant_genes = 2815
+
+## Number of biologically relevant differentially expressed genes based ontwo-fold change in gene expression
+fold_change_threshold <- 2
+relevant_genes <- sum(abs(res.shrunkOrdered$log2FoldChange) >= log2(fold_change_threshold), na.rm = TRUE)
+relevant_genes = 159
+
+## Estimate dispersions using mean method
+ddsTxi_mean <- estimateDispersions(ddsTxi, fitType="mean")
+plotDispEsts(ddsTxi_mean, main = "Mean Method")
+
+### The dispersion estimate plot shows the gene-wise estimates(black),the fitted values(red),and the final maximuma posteriori estimates used in testing(blue). The red line in the dispersion plot is straight horizontally and doesn't curve, it indicates that the mean-dispersion relationship is not  varying across the range of mean expression values. In other words, the dispersion estimates are relatively stable and consistent across different expression levels.
+
+## Visualization of Histogram
+library(ggplot2)
+ggplot(as.data.frame(res.shrunk),aes(pvalue)) + geom_histogram(fill="light blue",color='black')
+#### The pattern observed in the histogram has an enrichment of low p-values.  This is the expected result if there is a large class of differentially  expressed genes between treatment and control. This suggests that knockout of the genn does affect gene expression as shown with the low p-values (rejecting the null hypothesis that sugar composition does not affect gene expression). This shows that certain genes are differentially expressed between control and treatment
+
+## Write the DESeq2 results for all genes to a tab-delimited file
+## Specify the file path where you want to save the results
+output_file <- "/Users/mariagarzon/Downloads/final_ngs/DESeq2_results.txt"
+write.table(as.data.frame(res.shrunkOrdered), file = output_file, sep = "\t", quote = FALSE, row.names = FALSE)
+```
