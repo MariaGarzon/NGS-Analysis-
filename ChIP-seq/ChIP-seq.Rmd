@@ -1,0 +1,196 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+### Generate quality control metrics from ChIP-seq libraries to analyse the ChIP-seq data.
+
+## About the data
+The data for Task 1 are transcription factor ChIP-seq data for Androgen Receptor from Week 11, while the data for Task 2 are H3K36me3 ChIP-seq data from the ENCODE project.
+
+The SRA run accession numbers for the reads in Task 1 are:
+SRR7207011 is the Androgen Receptor ChIP for patient 1 (P1_AR_DSG) 
+SRR7207017 is the Androgen Receptor ChIP for patient 2 (P2_AR_DSG) 
+SRR7207089 is the “input” (P_Input_DSG)
+
+### MACS2 peaks and FRiP scores
+
+MACS2 outputs a narrowPeak file which is a format used by the ENCODE project to store peak intervals, P values, and related information
+
+#### How many peaks were called by MACS2 for each of the two Androgren Receptor ChIP-Seq samples in your MACS2 outputs from last week?
+
+```{r}
+wc -l SRR7207011_filteredmp_macs2_peaks.narrowPeak
+Output: 2001 SRR7207011_filteredmp_macs2_peaks.narrowPeak
+
+wc -l SRR7207017_filteredmp_macs2_peaks.narrowPeak
+Command used to count the total peaks called for sample SRR7207017
+Output: 20783 SRR7207017_filteredmp_macs2_peaks.narrowPeak
+```
+
+#### What is the mean peak width for each sample? 
+
+```{r}
+The mean peak width for sample SRR7207011 is 255.75962 bp. The mean peak width for sample SRR7207017 is 337.2638214 bp.
+
+Read in the narrowPeak file for sample 1
+p1_peaks <- read.table("SRR7207011.narrowPeak", header = FALSE, sep = "\t")
+nrow(p1_peaks) # number of peaks in sample 1
+Calculate mean peak width for sample 1
+mean(p1_peaks[,3] - p1_peaks[,2])
+
+Read in the narrowPeak file for sample 2
+p2_peaks <- read.table("SRR7207017.narrowPeak", header = FALSE, sep = "\t")
+nrow(p2_peaks) # number of peaks in sample 2
+Calculate mean peak width for sample 2
+mean(p2_peaks[,3] - p2_peaks[,2])
+```
+
+#### What is meant by the “signalValue” in column 7?
+
+##### The "signalValue" in column 7 of the narrowPeak file represents the score of the peak. It is calculated by MACS2 as the -log10(pvalue) of the peak, and represents the strength of the ChIP signal at that peak. Higher signalValue indicates a stronger peak signal.
+
+#### The Fraction of Reads in Peaks (FRiP) score is a simple measure of library quality that is useful in identifying low-quality libraries from a set of ChIP-seq libraries (i.e., it is useful in a comparative context). The FRiP score is calculated as implied by the name and is simply the number of reads overlapping called peaks divided by the total number of reads.
+
+```{r}
+bedtools intersect -a SRR7207011_filteredmp.bam -b SRR7207011_filteredmp_macs2_summits.bed > SRR7207011_bedtools.out
+samtools view -c SRR7207011_bedtools.out
+#Output: 19880 - numerator
+
+samtools view -c SRR7207011_filteredmp.bam
+#Output: 22517898 - denominator
+#FRip score for sample SRR7207011: 19880/22517898=0.0008828533=0.08828533%
+
+bedtools intersect -a SRR7207017_filteredmp.bam -b SRR7207017_filteredmp_macs2_summits.bed > SRR7207017_bedtools.out
+samtools view -c SRR7207017_bedtools.out
+#Output: 212633 - numerator
+samtools view -c SRR7207017_filteredmp.bam
+#Output: 20702991 - denominator 
+#FRip score for sample SRR7207017: 212633/20702991=0.01027064=1.027064%
+```
+
+##### Sample SRR7207011 has a FRiP score of 0.08828533% meaning it did not pass the 1% threshold while sample SRR7207017 did with a FRiP score of 1.027064%.
+
+### QC analysis of H3K36me3 ChIP-seq with the BioConductor ChIC package
+Histone ChIP-seq aims to identify regions of the genome with a given type of histone modification.
+
+#### Q2.1b. Which of the following are true statements about the cross-correlation profile. Select all that apply [ 1 point ]:  
+
+##### (a) aligned read asymmetries between DNA strands are the basis for the cross-correlation profile approach to ChIP-seq QC  
+##### (c) correlations between strand-specific depths are recalculated after performing a “strand shift”  
+##### (g) NSC values above a pre-defined threshold are of acceptable quality for downstream analysis  
+
+#### What is the NSC value for the ChIP sample?
+
+##### 1.447
+
+####  What is the RSC values for the ChIP sample?
+
+##### 1.079
+
+#### Do either of the metrics incorporate the “shadow peak” height in how they are calculated? Which one(s)?
+
+##### Neither the NSC nor the RSC values incorporate the "shadow peak" height in how they are calculated. They focus on assessing the quality of the ChIP-seq data based on the cross-correlation properties of aligned reads.
+
+#### Landt et al. 2012 (see “Cross-correlation Analysis”) provide minimum NSC and RSC values for libraries with acceptable signal-to-noise ratios. What are these minimum values and does this library pass ENCODE standards for quality control? Select one:  
+
+##### (f) minimum NSC = 1.05, minimum RSC = 0.8, the library passes QC  
+
+##### The RSC is calulated from the phantom peak, ChiP peak, and the background. The NSC metric is calculated using the ChiP peak and the background, but not the phantom peak.
+
+#### What steps are typically included/excluded in the preparation of the control/input sample? 
+
+##### chemical cross-linking of DNA and protein
+##### fragmentation of DNA
+##### unlinking of DNA and protein
+##### library preparation and sequencing of DNA
+
+#### What are the NSC and RSC values for the input sample? Would this library pass the quality control standards for the ENCODE project if it were a ChIP sample?
+
+```{r}
+$CC_StrandShift
+[1] 140
+
+$tag.shift
+[1] 70
+
+$N1
+[1] 8725518
+
+$Nd
+[1] 9119345
+
+$CC_PBC
+[1] 0.957
+
+$CC_readLength
+[1] 36
+
+$CC_UNIQUE_TAGS_LibSizeadjusted
+[1] 5992518
+
+$CC_NSC
+[1] 1.04
+
+$CC_RSC
+[1] 0.214
+
+$CC_QualityFlag
+[1] -2
+
+$CC_shift
+[1] 100
+
+$CC_A
+[1] 0.127
+
+$CC_B
+[1] 0.145
+
+$CC_C
+[1] 0.122
+
+$CC_ALL_TAGS
+[1] 9606580
+
+$CC_UNIQUE_TAGS
+[1] 9119345
+
+$CC_UNIQUE_TAGS_nostrand
+[1] 9098023
+
+$CC_NRF
+[1] 0.949
+
+$CC_NRF_nostrand
+[1] 0.947
+
+$CC_NRF_LibSizeadjusted
+[1] 0.599
+```
+
+##### The NSC value for the input sample = 1.04 while the 
+##### The RSC value for the input sample = 0.214. 
+##### This library did NOT pass the quality control standards for the ENCODE project. 
+
+#### ChIC calculates “Global Metrics” for ChIP-seq quality control. These metrics center around the fingerprint plot and nine metrics that can be derived from such plots (These are not discussed in the pre-recorded videos or elsewhere in the course).
+
+#### Imagine the input library is also a ChIP sample (not a control). Which of the following is the best interpretations of the fingerprint plot [ 1 point ].
+
+##### (c) the ChIP sample is higher quality because a greater proportion of reads are in higher ranked bins (i.e., bins ranked by depth) than the input  
+
+#### Q2.5. What is shown in the TSS plot? Please provide a detailed interpretation of the plot. Based on the TSS profile plot, describe where are H3K36me3 modifications typically located relative to protein coding genes. [ 1 point ]
+
+##### The TSS (Transcription Start Site) plot depicts the read density distribution around the transcription start sites in the sample compared to the control. It provides insights into the enrichment of specific protein factors or histone modifications in relation to the initiation of transcription.
+
+##### In the TSS plot, the Chip sample data is represented by a curve or line, while the control is typically shown as a baseline. The Chip sample curve indicates the binding or presence of proteins or histone modifications near the transcription start sites.
+
+##### The plot often displays two peaks, one on each side of the transcription start site. These peaks represent regions that are enriched with bound proteins or histone modifications. The peak on the left side (upstream of the TSS) indicates the presence of proteins or histone modifications associated with transcriptional regulation. The peak on the right side (downstream of the TSS, extending up to +1KB or beyond) typically corresponds to the localization of H3K36me3 histone modification.
+
+##### The distinguishing feature between the two peaks is their shape and width. The peak on the left tends to be narrower, suggesting the presence of specific transcription factors or other proteins involved in the initiation of transcription. On the other hand, the peak on the right sideassociated with H3K36me3) appears broader and more spread out, indicating a wider region of histone modification coverage along the gene body.
