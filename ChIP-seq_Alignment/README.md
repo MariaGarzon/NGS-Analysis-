@@ -1,5 +1,7 @@
 # ChIP-seq Analysis Project
 
+![Alt text](https://github.com/MariaGarzon/NGS-Analysis-/blob/main/ChIP-seq_Alignment/workflow.png)
+
 ## Overview
 In this project, I analyzed ChIP-seq data, aiming to characterize the locations of the Androgen Receptor (AR) transcription factor binding in prostate cancer tumors. 
 
