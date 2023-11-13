@@ -1,9 +1,7 @@
 # ChIP-seq Analysis Project
 
 ## Overview
-In this project, I've undertaken a comprehensive analysis of ChIP-seq data, aiming to characterize the locations of the 
-Androgen Receptor (AR) transcription factor binding in prostate cancer tumors. This analysis includes tasks such as data retrieval, 
-read processing, alignment, filtering, and peak calling using various bioinformatics tools and resources.
+In this project, I analyzed ChIP-seq data, aiming to characterize the locations of the Androgen Receptor (AR) transcription factor binding in prostate cancer tumors. 
 
 ## Background 
 The primary objective of a transcription factor ChIP-seq experiment is to determine the genomic regions that are bound by a 
